@@ -1,0 +1,28 @@
+# OS and editor scratch
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local dependencies and logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Generated scratch and previews
+.tmp/
+tmp/
+scratch/
+.playwright-mcp/

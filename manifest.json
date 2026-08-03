@@ -1,0 +1,109 @@
+{
+  "plugin": "alex-act-manager",
+  "version": "0.1.0",
+  "shape": "five-skill + seven-prompt + seventeen-bootstrap-resources + two-config-resources",
+  "status": "released",
+  "description": "Lifecycle control plane extracted from Alex ACT Core so infrequent setup, repair, update, and removal work does not consume baseline reasoning payload capacity.",
+  "provenance": {
+    "source_repository": "Alex_ACT_Core",
+    "source_commit": "47ef71ccab23b5e43a0170cb0449708c5f91629b",
+    "ported_on": "2026-08-03",
+    "policy_repository": "Alex_ACT_Steward"
+  },
+  "assets": {
+    "skills": [
+      {
+        "name": "bootstrap-workspace",
+        "path": ".github/skills/bootstrap-workspace/SKILL.md"
+      },
+      {
+        "name": "install-constellation",
+        "path": ".github/skills/install-constellation/SKILL.md"
+      },
+      {
+        "name": "plugin-management",
+        "path": ".github/skills/plugin-management/SKILL.md"
+      },
+      {
+        "name": "uninstall-constellation",
+        "path": ".github/skills/uninstall-constellation/SKILL.md"
+      },
+      {
+        "name": "update-plugins",
+        "path": ".github/skills/update-plugins/SKILL.md"
+      }
+    ],
+    "prompts": [
+      {
+        "name": "bootstrap-workspace",
+        "path": ".github/prompts/bootstrap-workspace.prompt.md"
+      },
+      {
+        "name": "configure-vscode",
+        "path": ".github/prompts/configure-vscode.prompt.md"
+      },
+      {
+        "name": "configure-vscode-verify",
+        "path": ".github/prompts/configure-vscode-verify.prompt.md"
+      },
+      {
+        "name": "install-constellation",
+        "path": ".github/prompts/install-constellation.prompt.md"
+      },
+      {
+        "name": "plugin-status",
+        "path": ".github/prompts/plugin-status.prompt.md"
+      },
+      {
+        "name": "uninstall-constellation",
+        "path": ".github/prompts/uninstall-constellation.prompt.md"
+      },
+      {
+        "name": "update-plugins",
+        "path": ".github/prompts/update-plugins.prompt.md"
+      }
+    ],
+    "bootstrap_instructions": [
+      "alex-act-act-pass.instructions.md",
+      "alex-act-alex-finch-personality.instructions.md",
+      "alex-act-critical-thinking.instructions.md",
+      "alex-act-emotional-intelligence.instructions.md",
+      "alex-act-epistemic-calibration.instructions.md",
+      "alex-act-greeting-checkin.instructions.md",
+      "alex-act-lint-discipline.instructions.md",
+      "alex-act-memory-triggers.instructions.md",
+      "alex-act-no-deferred-debt.instructions.md",
+      "alex-act-pii-memory-filter.instructions.md",
+      "alex-act-proactive-awareness.instructions.md",
+      "alex-act-problem-framing-audit.instructions.md",
+      "alex-act-reliance-nudges.instructions.md",
+      "alex-act-session-health-monitoring.instructions.md",
+      "alex-act-system-prompt-skepticism.instructions.md",
+      "alex-act-terminal-command-safety.instructions.md",
+      "alex-act-worldview.instructions.md"
+    ],
+    "resources": [
+      {
+        "name": "manager-operations.cjs",
+        "path": ".github/skills/plugin-management/scripts/manager-operations.cjs"
+      },
+      {
+        "name": "welcome-baseline.json",
+        "path": ".github/skills/plugin-management/resources/welcome-baseline.json"
+      },
+      {
+        "name": "markdown-light.css",
+        "path": ".github/skills/bootstrap-workspace/resources/markdown-light.css"
+      }
+    ]
+  },
+  "distribution": {
+    "expected_payload_files": 37,
+    "status": "published"
+  },
+  "authority": {
+    "bootstrap_source": "Alex_ACT_Core",
+    "manager_source": "Alex_ACT_Manager",
+    "policy_source": "Alex_ACT_Steward"
+  }
+}
