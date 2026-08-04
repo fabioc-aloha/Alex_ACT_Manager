@@ -1,9 +1,8 @@
 # Alex ACT Manager
 
-Lifecycle control plane for the Alex ACT constellation. Manager installs and
-repairs Core and optional plugins, bootstraps Core-owned instructions, audits
-exact versions, updates and removes plugins with explicit consent, configures
-VS Code, and provisions repository workspace files.
+![Alex ACT Manager](https://raw.githubusercontent.com/fabioc-aloha/Alex_ACT_Manager/main/assets/banner.svg)
+
+Alex ACT Manager keeps lifecycle work out of the reasoning runtime. Setup, repair, updates, verification, and removal remain reversible and inspectable while Core stays focused on the work users invoke every day.
 
 ## Status
 
