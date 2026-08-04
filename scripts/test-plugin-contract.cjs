@@ -38,7 +38,7 @@ function sha256(filePath) {
 test('plugin manifest exposes the Manager lifecycle bundle', () => {
   const plugin = readJson('plugin.json');
   assert.equal(plugin.name, 'alex-act-manager');
-  assert.equal(plugin.version, '0.2.1');
+  assert.equal(plugin.version, '0.2.2');
   assert.equal(plugin.skills, '.github/skills');
   assert.equal(plugin.commands, '.github/prompts');
 });
@@ -46,7 +46,7 @@ test('plugin manifest exposes the Manager lifecycle bundle', () => {
 test('source inventory and repository documentation are complete', () => {
   const manifest = readJson('manifest.json');
   assert.equal(manifest.plugin, 'alex-act-manager');
-  assert.equal(manifest.version, '0.2.1');
+  assert.equal(manifest.version, '0.2.2');
   assert.deepEqual(manifest.assets.skills.map((entry) => entry.name), skillNames);
   assert.deepEqual(manifest.assets.prompts.map((entry) => entry.name), promptNames);
   assert.equal(manifest.assets.bootstrap_instructions.length, 17);
@@ -295,4 +295,13 @@ test('marketplace resolver selects exact records and fails closed', (t) => {
   ], { encoding: 'utf8' });
   assert.notEqual(missing.status, 0);
   assert.match(missing.stderr, /plugin record not found: not-real/);
+});
+test('MSFT direct install is pinned to the managed Microsoft account', () => {
+  const content = [
+    '.github/skills/install-constellation/SKILL.md',
+    '.github/skills/plugin-management/SKILL.md',
+  ].map((relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')).join('\n');
+  assert.match(content, /fabioc_microsoft\/alex-act-msft/);
+  assert.doesNotMatch(content, /fabioc-aloha\/alex-act-msft/);
+  assert.match(content, /managed|enterprise member/i);
 });
