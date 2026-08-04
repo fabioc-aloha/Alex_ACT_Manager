@@ -7,13 +7,14 @@ VS Code, and provisions repository workspace files.
 
 ## Status
 
-**Released as `v0.1.1`.** Source:
+**Released as `v0.2.0`.** Source:
 [`fabioc-aloha/Alex_ACT_Manager`](https://github.com/fabioc-aloha/Alex_ACT_Manager).
 Install from the Alex ACT Mall as `alex-act-manager@alex-mall`.
 
-This patch disables VS Code's broken generic skill resolver while preserving
-Agent Skills. Reload VS Code or start a new Agent chat after installation so
-the host loads the corrected setting.
+This release preserves the VS Code skill-resolver mitigation and adds separate,
+preview-first setup planes for portable user settings and repository workspace
+CSS/settings. Reload VS Code or start a new Agent chat after installation so
+the host loads the updated plugin contracts.
 
 Core still owns and ships the compatibility lifecycle copies. Their removal is
 a separate Core release after the Manager route has adoption evidence.
