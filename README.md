@@ -11,6 +11,10 @@ VS Code, and provisions repository workspace files.
 [`fabioc-aloha/Alex_ACT_Manager`](https://github.com/fabioc-aloha/Alex_ACT_Manager).
 Install from the Alex ACT Mall as `alex-act-manager@alex-mall`.
 
+This patch disables VS Code's broken generic skill resolver while preserving
+Agent Skills. Reload VS Code or start a new Agent chat after installation so
+the host loads the corrected setting.
+
 Core still owns and ships the compatibility lifecycle copies. Their removal is
 a separate Core release after the Manager route has adoption evidence.
 
@@ -21,8 +25,8 @@ copilot plugin marketplace add fabioc-aloha/Alex_Skill_Mall
 copilot plugin install alex-act-manager@alex-mall
 ```
 
-Reload the host, then use a namespaced command such as
-`/alex-act-manager plugin-status`.
+Reload the host or start a new Agent chat, then use a namespaced command such
+as `/alex-act-manager plugin-status`.
 
 ## Why Manager Exists
 

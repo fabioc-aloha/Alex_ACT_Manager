@@ -7,6 +7,12 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## [Unreleased]
 
+### Added
+
+- Added preview-first user baseline merging and workspace CSS refresh, with
+  deep object merges, comment-rich JSONC fail-closed handling, and separate
+  consent/reporting for user settings, instructions, and workspace files.
+
 ## [0.1.1] - 2026-08-03
 
 ### Fixed
