@@ -2,6 +2,8 @@
 
 ![Alex ACT Manager](https://raw.githubusercontent.com/fabioc-aloha/Alex_ACT_Manager/main/assets/banner.svg)
 
+[Core](https://github.com/fabioc-aloha/Alex_ACT_Core) · [Manager](https://github.com/fabioc-aloha/Alex_ACT_Manager) · [Illustrator](https://github.com/fabioc-aloha/Alex_ACT_Illustrator_Plugin) · [Document Tools](https://github.com/fabioc-aloha/Alex_ACT_Document_Tools) · [Enterprise](https://github.com/fabioc-aloha/alex-act-enterprise)
+
 Alex ACT Manager keeps lifecycle work out of the reasoning runtime. Setup, repair, updates, verification, and removal remain reversible and inspectable while Core stays focused on the work users invoke every day.
 
 ## Status
