@@ -2,7 +2,7 @@
 
 This repository is the source for the optional `alex-act-manager` lifecycle
 plugin. It owns setup, repair, status, update, uninstall, VS Code configuration,
-repository workspace bootstrap, and optional workspace capability profiles. It does not own Alex Finch runtime identity,
+and repository workspace bootstrap. It does not own Alex Finch runtime identity,
 ACT reasoning, document conversion, visual authoring, or repository brain
 migration.
 
@@ -27,11 +27,8 @@ migration.
 7. Run `npm test` after every lifecycle or packaging change.
 8. Do not release, publish, install, or mutate user scope without separate
    approval.
-9. Never allow workspace capability configuration to disable Manager or Core.
-10. Treat private/internal plugin identifiers as repository-sensitive metadata;
-   require explicit acknowledgement before writing them.
-11. Do not claim repository settings control VS Code's separately stored
-   workspace plugin or MCP enablement state.
+9. Keep every user-selected installed constellation plugin enabled at user
+   scope; do not create a repository activation profile.
 
 ## Current Limit
 

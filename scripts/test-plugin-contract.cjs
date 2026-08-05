@@ -12,7 +12,6 @@ const repoRoot = path.resolve(__dirname, '..');
 const coreRoot = path.resolve(repoRoot, '..', 'Alex_ACT_Core');
 const skillNames = [
   'bootstrap-workspace',
-  'configure-workspace-capabilities',
   'install-constellation',
   'plugin-management',
   'uninstall-constellation',
@@ -20,7 +19,6 @@ const skillNames = [
 ];
 const promptNames = [
   'bootstrap-workspace',
-  'configure-workspace-capabilities',
   'configure-vscode',
   'configure-vscode-verify',
   'install-constellation',
@@ -40,7 +38,7 @@ function sha256(filePath) {
 test('plugin manifest exposes the Manager lifecycle bundle', () => {
   const plugin = readJson('plugin.json');
   assert.equal(plugin.name, 'alex-act-manager');
-  assert.equal(plugin.version, '0.3.3');
+  assert.equal(plugin.version, '0.4.0');
   assert.equal(plugin.skills, '.github/skills');
   assert.equal(plugin.commands, '.github/prompts');
 });
@@ -48,11 +46,11 @@ test('plugin manifest exposes the Manager lifecycle bundle', () => {
 test('source inventory and repository documentation are complete', () => {
   const manifest = readJson('manifest.json');
   assert.equal(manifest.plugin, 'alex-act-manager');
-  assert.equal(manifest.version, '0.3.3');
+  assert.equal(manifest.version, '0.4.0');
   assert.deepEqual(manifest.assets.skills.map((entry) => entry.name), skillNames);
   assert.deepEqual(manifest.assets.prompts.map((entry) => entry.name), promptNames);
   assert.equal(manifest.assets.bootstrap_instructions.length, 17);
-  assert.deepEqual(manifest.distribution.expected_payload_files, 39);
+  assert.deepEqual(manifest.distribution.expected_payload_files, 37);
 
   for (const relativePath of [
     'README.md',
@@ -109,19 +107,18 @@ test('install setup separately covers user settings and current workspace CSS', 
   const combined = `${skill}\n${prompt}`;
   assert.match(combined, /\/alex-act-manager configure-vscode/);
   assert.match(combined, /\/alex-act-manager bootstrap-workspace/);
-  assert.match(combined, /\/alex-act-manager configure-workspace-capabilities/);
+  assert.doesNotMatch(combined, /configure-workspace-capabilities/);
   assert.match(combined, /user(?:-scope| settings).*consent|consent.*user(?:-scope| settings)/is);
   assert.match(combined, /workspace.*consent|consent.*workspace/is);
-  assert.match(combined, /workspace capabilities.*consent|consent.*workspace capabilities/is);
   assert.match(combined, /\.vscode\/markdown-light\.css|\.vscode\\markdown-light\.css/);
   assert.match(combined, /markdown\.styles/);
-  assert.match(skill, /seven activation planes/);
+  assert.match(skill, /six activation planes/);
   assert.match(skill, /Step 7 is separately consent-gated/);
   assert.match(skill, /optional plugins.*missing brain\s+components/is);
   assert.doesNotMatch(skill, /summary with four activation planes/);
 });
 
-test('install keeps only Manager and Core enabled globally', () => {
+test('install enables every selected plugin globally', () => {
   const skill = fs.readFileSync(path.join(
     repoRoot, '.github', 'skills', 'install-constellation', 'SKILL.md'), 'utf8');
   const prompt = fs.readFileSync(path.join(
@@ -133,13 +130,14 @@ test('install keeps only Manager and Core enabled globally', () => {
   for (const optionalPlugin of [
     'alex-act-illustrator-plugin@alex-mall',
     'alex-act-enterprise@alex-mall',
+    'alex-act-document-tools@alex-mall',
     'alex-act-msft',
   ]) {
-    assert.match(settingsSection, new RegExp(`"${optionalPlugin}": false`));
-    assert.doesNotMatch(settingsSection, new RegExp(`"${optionalPlugin}": true`));
+    assert.match(settingsSection, new RegExp(`"${optionalPlugin}": true`));
+    assert.doesNotMatch(settingsSection, new RegExp(`"${optionalPlugin}": false`));
   }
-  assert.match(prompt, /Manager and Core.*true.*optional.*false/is);
-  assert.match(prompt, /configure-workspace-capabilities/);
+  assert.match(prompt, /selected.*plugins.*true|plugins.*selected.*true/is);
+  assert.doesNotMatch(prompt, /configure-workspace-capabilities/);
 });
 
 test('bootstrap bundle contains seventeen Core-owned instruction resources', () => {
@@ -210,7 +208,7 @@ test('installable source stays below the Windows payload ceiling', () => {
   }
   for (const root of roots) collect(path.join(repoRoot, root));
   assert(files.length <= 100, `${files.length} installable files exceed the 100-file ceiling`);
-  assert.equal(files.length, 35, 'unexpected installable source file count');
+  assert.equal(files.length, 33, 'unexpected installable source file count');
 });
 
 test('workspace bootstrap is self-contained and preview-only by default', (t) => {
@@ -322,97 +320,16 @@ test('marketplace resolver selects exact records and fails closed', (t) => {
   assert.match(missing.stderr, /plugin record not found: not-real/);
 });
 
-test('workspace capability preview pins the brain spine and writes nothing', (t) => {
-  const target = fs.mkdtempSync(path.join(os.tmpdir(), 'manager-capabilities-preview-'));
-  t.after(() => fs.rmSync(target, { recursive: true, force: true }));
-  const settingsDirectory = path.join(target, '.github', 'copilot');
-  const settingsFile = path.join(settingsDirectory, 'settings.json');
-  fs.mkdirSync(settingsDirectory, { recursive: true });
-  const original = JSON.stringify({ enabledPlugins: { 'existing@market': true }, custom: { keep: true } }, null, 2) + '\n';
-  fs.writeFileSync(settingsFile, original);
+test('workspace capability surface is absent', () => {
   const script = path.join(
     repoRoot, '.github', 'skills', 'plugin-management', 'scripts', 'manager-operations.cjs');
-  const plan = JSON.parse(execFileSync(process.execPath, [
-    script,
-    'configure-workspace-capabilities',
-    '--target', target,
-    '--enable', 'alex-act-illustrator-plugin@alex-mall',
-    '--disable', 'alex-act-document-tools@alex-mall',
-  ], { cwd: repoRoot, encoding: 'utf8' }));
-  assert.equal(plan.apply, false);
-  assert.equal(plan.settingsFile, settingsFile);
-  assert.equal(plan.desired.enabledPlugins['alex-act-manager@alex-mall'], true);
-  assert.equal(plan.desired.enabledPlugins['alex-act-core@alex-mall'], true);
-  assert.equal(plan.desired.enabledPlugins['alex-act-illustrator-plugin@alex-mall'], true);
-  assert.equal(plan.desired.enabledPlugins['alex-act-document-tools@alex-mall'], false);
-  assert.equal(plan.cliRuntimeState, 'repository-true-does-not-override-user-false');
-  assert.ok(plan.cliInstructions.some((instruction) => instruction.includes('--plugin-dir')));
-  assert.equal(plan.vscodeRuntimeState, 'reconcile-in-workspace-ui');
-  assert.equal(fs.readFileSync(settingsFile, 'utf8'), original);
-});
-
-test('workspace capability apply deep-merges and is idempotent', (t) => {
-  const target = fs.mkdtempSync(path.join(os.tmpdir(), 'manager-capabilities-apply-'));
-  t.after(() => fs.rmSync(target, { recursive: true, force: true }));
-  const settingsDirectory = path.join(target, '.github', 'copilot');
-  const settingsFile = path.join(settingsDirectory, 'settings.json');
-  fs.mkdirSync(settingsDirectory, { recursive: true });
-  fs.writeFileSync(settingsFile, JSON.stringify({
-    enabledPlugins: { 'existing@market': true },
-    extraKnownMarketplaces: { existing: { source: { source: 'github', repo: 'owner/repo' } } },
-  }, null, 2));
-  const script = path.join(
-    repoRoot, '.github', 'skills', 'plugin-management', 'scripts', 'manager-operations.cjs');
-  const args = [
-    script,
-    'configure-workspace-capabilities',
-    '--target', target,
-    '--enable', 'alex-act-enterprise@alex-mall',
-    '--disable', 'alex-act-illustrator-plugin@alex-mall',
-  ];
-  const applied = JSON.parse(execFileSync(process.execPath, [...args, '--apply'], {
+  const result = spawnSync(process.execPath, [script, 'configure-workspace-capabilities'], {
     cwd: repoRoot, encoding: 'utf8',
-  }));
-  assert.equal(applied.action, 'merge');
-  const current = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
-  assert.equal(current.enabledPlugins['existing@market'], true);
-  assert.equal(current.enabledPlugins['alex-act-manager@alex-mall'], true);
-  assert.equal(current.enabledPlugins['alex-act-core@alex-mall'], true);
-  assert.equal(current.enabledPlugins['alex-act-enterprise@alex-mall'], true);
-  assert.equal(current.enabledPlugins['alex-act-illustrator-plugin@alex-mall'], false);
-  assert.equal(current.extraKnownMarketplaces.existing.source.repo, 'owner/repo');
-  const second = JSON.parse(execFileSync(process.execPath, args, {
-    cwd: repoRoot, encoding: 'utf8',
-  }));
-  assert.equal(second.action, 'preserve');
-  assert.deepEqual(second.changes, []);
-});
-
-test('workspace capability guard rejects disabling spine and unacknowledged private keys', (t) => {
-  const target = fs.mkdtempSync(path.join(os.tmpdir(), 'manager-capabilities-guard-'));
-  t.after(() => fs.rmSync(target, { recursive: true, force: true }));
-  const script = path.join(
-    repoRoot, '.github', 'skills', 'plugin-management', 'scripts', 'manager-operations.cjs');
-  const spine = spawnSync(process.execPath, [
-    script, 'configure-workspace-capabilities', '--target', target,
-    '--disable', 'alex-act-core@alex-mall',
-  ], { cwd: repoRoot, encoding: 'utf8' });
-  assert.notEqual(spine.status, 0);
-  assert.match(spine.stderr, /brain spine.*cannot be disabled/i);
-
-  const privateDenied = spawnSync(process.execPath, [
-    script, 'configure-workspace-capabilities', '--target', target,
-    '--enable', 'alex-act-msft',
-  ], { cwd: repoRoot, encoding: 'utf8' });
-  assert.notEqual(privateDenied.status, 0);
-  assert.match(privateDenied.stderr, /private.*include-private/i);
-
-  const privatePlan = JSON.parse(execFileSync(process.execPath, [
-    script, 'configure-workspace-capabilities', '--target', target,
-    '--enable', 'alex-act-msft', '--include-private',
-  ], { cwd: repoRoot, encoding: 'utf8' }));
-  assert.equal(privatePlan.desired.enabledPlugins['alex-act-msft'], true);
-  assert.match(privatePlan.visibilityWarning, /committed.*private|private.*committed/i);
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /unknown command/);
+  assert(!fs.existsSync(path.join(repoRoot, '.github', 'skills', 'configure-workspace-capabilities')));
+  assert(!fs.existsSync(path.join(repoRoot, '.github', 'prompts', 'configure-workspace-capabilities.prompt.md')));
 });
 
 test('MSFT direct install is pinned to the managed Microsoft account', () => {
