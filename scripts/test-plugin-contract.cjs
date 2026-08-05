@@ -40,7 +40,7 @@ function sha256(filePath) {
 test('plugin manifest exposes the Manager lifecycle bundle', () => {
   const plugin = readJson('plugin.json');
   assert.equal(plugin.name, 'alex-act-manager');
-  assert.equal(plugin.version, '0.3.1');
+  assert.equal(plugin.version, '0.3.2');
   assert.equal(plugin.skills, '.github/skills');
   assert.equal(plugin.commands, '.github/prompts');
 });
@@ -48,7 +48,7 @@ test('plugin manifest exposes the Manager lifecycle bundle', () => {
 test('source inventory and repository documentation are complete', () => {
   const manifest = readJson('manifest.json');
   assert.equal(manifest.plugin, 'alex-act-manager');
-  assert.equal(manifest.version, '0.3.1');
+  assert.equal(manifest.version, '0.3.2');
   assert.deepEqual(manifest.assets.skills.map((entry) => entry.name), skillNames);
   assert.deepEqual(manifest.assets.prompts.map((entry) => entry.name), promptNames);
   assert.equal(manifest.assets.bootstrap_instructions.length, 17);
@@ -119,6 +119,27 @@ test('install setup separately covers user settings and current workspace CSS', 
   assert.match(skill, /Step 7 is separately consent-gated/);
   assert.match(skill, /optional plugins.*missing brain\s+components/is);
   assert.doesNotMatch(skill, /summary with four activation planes/);
+});
+
+test('install keeps only Manager and Core enabled globally', () => {
+  const skill = fs.readFileSync(path.join(
+    repoRoot, '.github', 'skills', 'install-constellation', 'SKILL.md'), 'utf8');
+  const prompt = fs.readFileSync(path.join(
+    repoRoot, '.github', 'prompts', 'install-constellation.prompt.md'), 'utf8');
+  const settingsSection = skill.match(/### Step 5 — Settings merge([\s\S]*?)(?=### Step 6)/)?.[1];
+  assert.ok(settingsSection, 'missing Step 5 settings merge contract');
+  assert.match(settingsSection, /"alex-act-manager@alex-mall": true/);
+  assert.match(settingsSection, /"alex-act-core@alex-mall": true/);
+  for (const optionalPlugin of [
+    'alex-act-illustrator-plugin@alex-mall',
+    'alex-act-enterprise@alex-mall',
+    'alex-act-msft',
+  ]) {
+    assert.match(settingsSection, new RegExp(`"${optionalPlugin}": false`));
+    assert.doesNotMatch(settingsSection, new RegExp(`"${optionalPlugin}": true`));
+  }
+  assert.match(prompt, /Manager and Core.*true.*optional.*false/is);
+  assert.match(prompt, /configure-workspace-capabilities/);
 });
 
 test('bootstrap bundle contains seventeen Core-owned instruction resources', () => {
