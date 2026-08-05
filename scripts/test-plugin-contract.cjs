@@ -40,7 +40,7 @@ function sha256(filePath) {
 test('plugin manifest exposes the Manager lifecycle bundle', () => {
   const plugin = readJson('plugin.json');
   assert.equal(plugin.name, 'alex-act-manager');
-  assert.equal(plugin.version, '0.3.2');
+  assert.equal(plugin.version, '0.3.3');
   assert.equal(plugin.skills, '.github/skills');
   assert.equal(plugin.commands, '.github/prompts');
 });
@@ -48,7 +48,7 @@ test('plugin manifest exposes the Manager lifecycle bundle', () => {
 test('source inventory and repository documentation are complete', () => {
   const manifest = readJson('manifest.json');
   assert.equal(manifest.plugin, 'alex-act-manager');
-  assert.equal(manifest.version, '0.3.2');
+  assert.equal(manifest.version, '0.3.3');
   assert.deepEqual(manifest.assets.skills.map((entry) => entry.name), skillNames);
   assert.deepEqual(manifest.assets.prompts.map((entry) => entry.name), promptNames);
   assert.equal(manifest.assets.bootstrap_instructions.length, 17);
@@ -345,6 +345,8 @@ test('workspace capability preview pins the brain spine and writes nothing', (t)
   assert.equal(plan.desired.enabledPlugins['alex-act-core@alex-mall'], true);
   assert.equal(plan.desired.enabledPlugins['alex-act-illustrator-plugin@alex-mall'], true);
   assert.equal(plan.desired.enabledPlugins['alex-act-document-tools@alex-mall'], false);
+  assert.equal(plan.cliRuntimeState, 'repository-true-does-not-override-user-false');
+  assert.ok(plan.cliInstructions.some((instruction) => instruction.includes('--plugin-dir')));
   assert.equal(plan.vscodeRuntimeState, 'reconcile-in-workspace-ui');
   assert.equal(fs.readFileSync(settingsFile, 'utf8'), original);
 });
