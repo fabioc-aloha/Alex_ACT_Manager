@@ -1,7 +1,7 @@
 {
   "plugin": "alex-act-manager",
-  "version": "0.2.2",
-  "shape": "five-skill + seven-prompt + seventeen-bootstrap-resources + two-config-resources",
+  "version": "0.3.0",
+  "shape": "six-skill + eight-prompt + seventeen-bootstrap-resources + two-config-resources",
   "status": "released",
   "description": "Lifecycle control plane extracted from Alex ACT Core so infrequent setup, repair, update, and removal work does not consume baseline reasoning payload capacity.",
   "provenance": {
@@ -15,6 +15,10 @@
       {
         "name": "bootstrap-workspace",
         "path": ".github/skills/bootstrap-workspace/SKILL.md"
+      },
+      {
+        "name": "configure-workspace-capabilities",
+        "path": ".github/skills/configure-workspace-capabilities/SKILL.md"
       },
       {
         "name": "install-constellation",
@@ -37,6 +41,10 @@
       {
         "name": "bootstrap-workspace",
         "path": ".github/prompts/bootstrap-workspace.prompt.md"
+      },
+      {
+        "name": "configure-workspace-capabilities",
+        "path": ".github/prompts/configure-workspace-capabilities.prompt.md"
       },
       {
         "name": "configure-vscode",
@@ -98,7 +106,7 @@
     ]
   },
   "distribution": {
-    "expected_payload_files": 37,
+    "expected_payload_files": 39,
     "status": "published"
   },
   "authority": {

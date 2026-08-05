@@ -8,14 +8,13 @@ Alex ACT Manager keeps lifecycle work out of the reasoning runtime. Setup, repai
 
 ## Status
 
-**Released as `v0.2.2`.** Source:
+**Released as `v0.3.0`.** Source:
 [`fabioc-aloha/Alex_ACT_Manager`](https://github.com/fabioc-aloha/Alex_ACT_Manager).
 Install from the Alex ACT Mall as `alex-act-manager@alex-mall`.
 
-This release preserves the VS Code skill-resolver mitigation and adds separate,
-preview-first setup planes for portable user settings and repository workspace
-CSS/settings. Reload VS Code or start a new Agent chat after installation so
-the host loads the updated plugin contracts.
+Manager and Core remain the mandatory brain spine. Preview-first workspace
+capability profiles select optional plugins per repository without writing VS
+Code's separately stored workspace state.
 
 Core still owns and ships the compatibility lifecycle copies. Their removal is
 a separate Core release after the Manager route has adoption evidence.
@@ -42,7 +41,7 @@ those concerns without becoming a second brain.
 | Safety, privacy, communication, and memory routing | Exact version resolution and status |
 | Frequent reasoning and engineering skills | Plugin update and uninstall |
 | Drift signals and a compact Manager route | Core instruction bootstrap |
-| Canonical source instructions | VS Code and repository workspace setup |
+| Canonical source instructions | VS Code, repository setup, and optional workspace capabilities |
 
 ## What Ships
 
@@ -53,8 +52,9 @@ those concerns without becoming a second brain.
 | `update-plugins` | Preview and apply consented updates |
 | `uninstall-constellation` | Preview and perform clean removal |
 | `bootstrap-workspace` | Provision repository-scoped VS Code files |
+| `configure-workspace-capabilities` | Pin Manager/Core and select optional plugins per repository |
 
-Seven namespaced commands expose those skills plus user-scope VS Code apply and
+Eight namespaced commands expose those skills plus user-scope VS Code apply and
 verify flows. `manager-operations.cjs` provides deterministic marketplace and
 workspace behavior.
 
@@ -72,8 +72,9 @@ npm test
 ```
 
 The contract verifies component inventory, Core bootstrap parity, Manager
-command namespaces, payload capacity, empty-state workspace preview, and exact
-marketplace version resolution.
+command namespaces, payload capacity, empty-state workspace preview, immutable
+brain-spine guards, optional capability deep merges, private-identifier gates,
+and exact marketplace version resolution.
 
 ## Current Boundary
 
