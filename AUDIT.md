@@ -4,6 +4,20 @@
 **Branch**: `main` \
 **Commit**: `a9a3ddc` \
 **Scope**: Correctness, lifecycle safety, packaging, tests, security, and documentation
+**Remediation update**: 2026-08-06; all reported source findings are resolved locally. Hosted CI evidence requires the next authorized push.
+
+## Remediation Status
+
+| Finding | Status | Evidence |
+| --- | --- | --- |
+| JSONC corruption and comment loss | Resolved | String-aware scanner plus URL, marker-string, and workspace-comment regressions |
+| Six-plugin lifecycle drift | Resolved | Canonical `constellation-inventory.json` consumed by install, status, update, and uninstall contracts |
+| Duplicate broad `.vscode` ignores | Resolved | All broad rules reconciled; `git check-ignore` regression passes |
+| Payload accounting drift | Resolved | Delivery surface is `repository-at-release-tag`; only the real ceiling remains tested |
+| Settings verification mismatch | Resolved | Read-only prompt delegates to deterministic `configure-vscode` preview |
+| Conflicting update authority | Resolved | Exact Mall manifest resolver is authoritative; catalog is discovery-only |
+| Conditional release assurance | Resolved in source | 26 local tests pass; CI checks out immutable Core `v1.0.0` and runs the same suite |
+| Bootstrap and namespace documentation drift | Resolved | 16-file language and Manager-owned `plugin-status` route are contract-tested |
 
 ## Executive Summary
 

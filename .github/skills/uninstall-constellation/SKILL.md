@@ -1,6 +1,6 @@
 ---
 name: uninstall-constellation
-description: "Cleanly uninstalls the four Alex ACT constellation plugins (alex-act-core, alex-act-illustrator-plugin, alex-act-enterprise, alex-act-msft), the sixteen user-scope discipline instructions Core bootstrapped, and the four enabledPlugins entries — by detecting current state, generating a machine-tailored PowerShell script at the workspace root (fallback ~/.copilot/tmp/), and guiding the heir to run it after closing VS Code. Sidesteps the Windows os error 5 problem (VS Code holds plugin-tree handles) rather than trying to force through it. Preserves marketplace registrations and takes a settings.json backup. Use when a heir wants to fully remove the constellation, reset before troubleshooting, migrate to a different setup, or start clean before a major upgrade."
+description: "Cleanly uninstalls the six Alex ACT constellation plugins (Manager, Core, Illustrator, Document Tools, Enterprise, and MSFT), the sixteen user-scope discipline instructions Core bootstrapped, and their enabledPlugins entries by generating a machine-tailored PowerShell script for execution after VS Code closes. Use for full removal, reset, migration, or clean major-version upgrades."
 lastReviewed: 2026-08-01
 ---
 
@@ -47,6 +47,11 @@ The three cross-platform alternatives were evaluated and rejected:
 
 ## Consent flow
 
+Load the exact lifecycle targets from
+[`constellation-inventory.json`](../plugin-management/resources/constellation-inventory.json):
+`alex-act-manager`, `alex-act-core`, `alex-act-illustrator-plugin`,
+`alex-act-document-tools`, `alex-act-enterprise`, and `alex-act-msft`.
+
 ### Step 1 — Confirm intent
 
 Present the heir with a preview of exactly what will be removed. Read state before asking:
@@ -61,10 +66,10 @@ Report to the heir:
 
 | Item | Count | Fate |
 |---|---|---|
-| Constellation plugins | N (up to 4) | Uninstalled |
-| Bootstrap discipline files at `~/.copilot/instructions/` | N (up to 17) | Removed |
+| Constellation plugins | N (up to 6) | Uninstalled |
+| Bootstrap discipline files at `~/.copilot/instructions/` | N (up to 16) | Removed |
 | Bootstrap receipt (`.alex-act-bootstrap.json`) | 1 if present | Removed |
-| `enabledPlugins` entries in `~/.copilot/settings.json` | N (up to 4) | Removed (usually by CLI during uninstall) |
+| `enabledPlugins` entries in `~/.copilot/settings.json` | N (up to 6) | Removed (usually by CLI during uninstall) |
 | Marketplace registrations (`alex-mall`, others) | Preserved | Kept for one-command reinstall |
 | Unrelated `enabledPlugins` entries | Preserved | Untouched |
 | `settings.json` backup | Created before edit | Kept indefinitely |
@@ -103,8 +108,10 @@ if ($vscode) {
 
 ```powershell
 $plugins = @(
+    'alex-act-manager@alex-mall',
     'alex-act-core@alex-mall',
     'alex-act-illustrator-plugin@alex-mall',
+    'alex-act-document-tools@alex-mall',
     'alex-act-enterprise@alex-mall',
     'alex-act-msft'
 )
@@ -184,7 +191,7 @@ After writing the script, produce a summary:
 
 Then close with the reinstall path:
 
-> After running, to reinstall: `copilot plugin install alex-act-core@alex-mall`, then reload VS Code and invoke `/alex-act-manager install-constellation`.
+> After running, reinstall Manager first with `copilot plugin install alex-act-manager@alex-mall`, then install Core with `copilot plugin install alex-act-core@alex-mall`, reload VS Code, and invoke `/alex-act-manager install-constellation`.
 
 ## What's preserved
 
@@ -194,10 +201,10 @@ Then close with the reinstall path:
 
 ## What's removed
 
-- All four constellation plugin trees under `~/.copilot/installed-plugins/`
+- All six constellation plugin trees under `~/.copilot/installed-plugins/`
 - All `alex-act-*.instructions.md` files at `~/.copilot/instructions/` (exact list from the receipt, not a glob)
 - Bootstrap receipt `.alex-act-bootstrap.json`
-- Four constellation entries in `enabledPlugins` (usually already cleaned by `copilot plugin uninstall`)
+- Six constellation entries in `enabledPlugins` (usually already cleaned by `copilot plugin uninstall`)
 
 ## Report shape after successful script run
 
@@ -209,7 +216,7 @@ The heir will see the following on their PowerShell terminal:
      Plugin "alex-act-core@alex-mall" uninstalled successfully.
      ... (× 4)
 [2/4] Sweeping bootstrap files...
-    Removed 17 / 17 bootstrap files
+    Removed 16 / 16 bootstrap files
      Removed receipt
 [3/4] Pruning enabledPlugins (safety net) ...
      0 stale entries found — CLI uninstall already cleaned them

@@ -14,7 +14,7 @@ when its installed folder exists.
 Steps:
 
 1. Load skill: [plugin-management](../skills/plugin-management/SKILL.md).
-2. Verify Copilot CLI is installed (`copilot --version`); if missing, direct the user to the install docs and stop.
+2. Load the canonical lifecycle inventory from [`constellation-inventory.json`](../skills/plugin-management/resources/constellation-inventory.json): `alex-act-manager`, `alex-act-core`, `alex-act-illustrator-plugin`, `alex-act-document-tools`, `alex-act-enterprise`, and `alex-act-msft`. Verify Copilot CLI is installed (`copilot --version`); if missing, direct the user to the install docs and stop.
 3. Run `copilot plugin list` and capture the output.
 4. Read `~/.copilot/settings.json` (user scope) if present.
 5. Read `.github/copilot/settings.json` in the current workspace if present.
@@ -24,7 +24,7 @@ Steps:
    - **Repo-scope plugins**: from `.github/copilot/settings.json` `enabledPlugins`
    - **Direct-installed plugins**: from `~/.copilot/installed-plugins/_direct/`
    - **Registered marketplaces**: from `extraKnownMarketplaces` in both files
-   - **Alex ACT constellation status**: which of the four constellation plugins (`alex-act-core`, `alex-act-illustrator-plugin`, `alex-act-enterprise`, `alex-act-msft`) are installed vs missing
+   - **Alex ACT constellation status**: which of the six inventory plugins (`alex-act-manager`, `alex-act-core`, `alex-act-illustrator-plugin`, `alex-act-document-tools`, `alex-act-enterprise`, `alex-act-msft`) are installed vs missing
    - **Updates available**: any plugin where installed version < the exact marketplace record
    - **Activation planes**: separate `installed`, `enabled`, `instruction-loaded`, and `skill-invokable` status; use `host-limited` when generic skill registration fails but installed files and namespaced fallback exist
 8. Do not modify anything. Do not run install / update / remove commands.

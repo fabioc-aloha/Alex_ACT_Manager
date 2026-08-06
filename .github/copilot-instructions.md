@@ -8,8 +8,8 @@ migration.
 
 ## Ownership
 
-- `Alex_ACT_Core` owns runtime identity, ACT reasoning, and the 17 source
-  instructions Manager packages for bootstrap.
+- `Alex_ACT_Core` owns runtime identity, ACT reasoning, and 17 source
+   instructions; Manager packages the approved 16-file bootstrap subset.
 - This repository owns lifecycle skills, commands, deterministic scripts, and
   configuration resources.
 - `Alex_ACT_Steward` owns architecture, approval, and release coordination.
@@ -18,7 +18,7 @@ migration.
 
 1. Preview every mutating lifecycle operation before asking for consent.
 2. Fail closed when version authority or install source is ambiguous.
-3. Never alter the 17 bootstrap resources independently of Core; regenerate and
+3. Never alter the 16 bootstrap resources independently of Core; regenerate and
    verify them from an immutable Core source.
 4. Keep Manager commands under the `/alex-act-manager` namespace.
 5. Keep skill resources inside declared skill roots so Mall packaging preserves

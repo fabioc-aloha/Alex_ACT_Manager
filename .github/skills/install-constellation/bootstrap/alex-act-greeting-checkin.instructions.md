@@ -213,7 +213,7 @@ Sunset or restructure by **2026-11-04** if:
 - Users report the check-in fires too often (nagging) — cache window is too short OR trigger patterns too broad
 - Users report the check-in never fires when it should — greeting patterns too narrow OR the 40-char filter is wrong
 - The Mall catalog fetch fails > 20% of check-ins — swap to per-plugin polls (heavier but more reliable)
-- Users hit the response D silent path but still don't discover Alex ACT features — add a lightweight "type `/alex-act-core plugin-status` to see what Core offers" hint on healthy responses (test change)
+- Users hit the response D silent path but still don't discover Alex ACT features — add a lightweight "type `/alex-act-manager plugin-status` to see what Manager reports" hint on healthy responses (test change)
 - Setup incomplete state doesn't correctly detect a heir who ran a partial install and quit halfway — need more granular state classification
 - Optional-plugin absence is reported as unhealthy
 

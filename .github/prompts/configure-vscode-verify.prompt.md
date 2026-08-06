@@ -21,71 +21,19 @@ The baseline lives at `<plugin-management-skill>/resources/welcome-baseline.json
 
 ## Read-Only Steps
 
-1. Load the baseline from `<plugin-management-skill>/resources/welcome-baseline.json` (`settings` object).
-2. Resolve the user settings path for the current OS:
-   - Windows: `%APPDATA%\Code\User\settings.json`
-   - macOS: `~/Library/Application Support/Code/User/settings.json`
-   - Linux: `~/.config/Code/User/settings.json`
-3. Read `settings.json` as-is.
-4. Compare each baseline key/value pair.
-5. Classify each key:
-   - `compliant` (value matches)
-   - `drift` (key exists but value differs)
-   - `missing` (key absent)
-6. Report compliance summary and drift table.
-7. Recommend running `/alex-act-manager configure-vscode` only if drift or missing keys are found.
+1. Resolve `<plugin-management-skill>/scripts/manager-operations.cjs` from the installed Manager tree.
+2. Run its `configure-vscode` command without `--apply`. The command resolves the OS-specific user settings path, parses JSONC with string-aware comment and trailing-comma handling, and applies the same deep-merge compliance semantics as the write path.
+3. Read the returned JSON plan. `compliant` lists current keys; `changes` lists missing or drifted values; `unsupportedLocalMarkdownStyles` reports local absolute CSS paths separately.
+4. Report compliance summary and the change table.
+5. Recommend running `/alex-act-manager configure-vscode` only if changes are present.
 
-## Reference Commands (read-only audit)
+## Reference Command
 
-Three shells, one payload. Pick the one for your OS.
-
-### macOS / Linux (bash, zsh)
-
-```bash
-baseline_file="<plugin-management-skill>/resources/welcome-baseline.json"
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  user_settings="$HOME/Library/Application Support/Code/User/settings.json"
-else
-  user_settings="$HOME/.config/Code/User/settings.json"
-fi
-node -e "
-const fs = require('fs');
-const b = JSON.parse(fs.readFileSync('$baseline_file', 'utf8')).settings;
-const c = fs.existsSync('$user_settings') ? JSON.parse(fs.readFileSync('$user_settings', 'utf8')) : {};
-const drift = [], missing = [], compliant = [];
-for (const k of Object.keys(b)) {
-  if (!(k in c)) missing.push(k);
-  else if (JSON.stringify(c[k]) !== JSON.stringify(b[k])) drift.push({ k, expected: b[k], actual: c[k] });
-  else compliant.push(k);
-}
-console.log('Compliance:', compliant.length + '/' + Object.keys(b).length);
-console.log('Drift:', drift.length);
-console.log('Missing:', missing.length);
-if (drift.length) console.log('Drifted:', JSON.stringify(drift, null, 2));
-if (missing.length) console.log('Missing keys:', missing);
-"
+```text
+node "<plugin-management-skill>/scripts/manager-operations.cjs" configure-vscode
 ```
 
-### Windows (PowerShell)
-
-```powershell
-$baseline = Get-Content '<plugin-management-skill>\resources\welcome-baseline.json' -Raw | ConvertFrom-Json -AsHashtable
-$userSettings = Join-Path $env:APPDATA 'Code\User\settings.json'
-$current = if (Test-Path $userSettings) { Get-Content -Path $userSettings -Raw | ConvertFrom-Json -AsHashtable } else { @{} }
-$drift = @(); $missing = @(); $compliant = @()
-foreach ($k in $baseline.settings.Keys) {
-  if (-not $current.ContainsKey($k)) { $missing += $k }
-  elseif (($current[$k] | ConvertTo-Json -Depth 30 -Compress) -ne ($baseline.settings[$k] | ConvertTo-Json -Depth 30 -Compress)) { $drift += [pscustomobject]@{ key=$k; expected=$baseline.settings[$k]; actual=$current[$k] } }
-  else { $compliant += $k }
-}
-Write-Host ("Compliance: {0}/{1}" -f $compliant.Count, $baseline.settings.Count)
-Write-Host ("Drift: {0}" -f $drift.Count)
-Write-Host ("Missing: {0}" -f $missing.Count)
-if ($drift.Count) { $drift | Format-Table -AutoSize }
-if ($missing.Count) { Write-Host ("Missing keys: {0}" -f ($missing -join ', ')) }
-```
-
-Both commands are read-only — they never write to `settings.json`.
+Without `--apply`, this command is read-only and never writes to `settings.json`.
 
 If user settings contain an absolute local path in `markdown.styles`, report it as unsupported guidance. Recommend an HTTPS stylesheet for user scope or `/alex-act-manager bootstrap-workspace` for workspace-relative local CSS.
 

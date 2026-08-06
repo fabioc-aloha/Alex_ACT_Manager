@@ -26,6 +26,14 @@ const promptNames = [
   'uninstall-constellation',
   'update-plugins',
 ];
+const constellationPluginNames = [
+  'alex-act-manager',
+  'alex-act-core',
+  'alex-act-illustrator-plugin',
+  'alex-act-document-tools',
+  'alex-act-enterprise',
+  'alex-act-msft',
+];
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
@@ -50,13 +58,14 @@ test('source inventory and repository documentation are complete', () => {
   assert.deepEqual(manifest.assets.skills.map((entry) => entry.name), skillNames);
   assert.deepEqual(manifest.assets.prompts.map((entry) => entry.name), promptNames);
   assert.equal(manifest.assets.bootstrap_instructions.length, 16);
-  assert.deepEqual(manifest.distribution.expected_payload_files, 36);
+  assert.equal(manifest.distribution.payload_surface, 'repository-at-release-tag');
 
   for (const relativePath of [
     'README.md',
     'CHANGELOG.md',
     'LICENSE',
     '.github/copilot-instructions.md',
+    '.github/workflows/test.yml',
   ]) {
     assert(fs.existsSync(path.join(repoRoot, relativePath)), `missing ${relativePath}`);
   }
@@ -154,6 +163,55 @@ test('install offers Document Tools now that conversion is outside Core', () => 
   assert.match(skill, /Document Tools third/);
 });
 
+test('every lifecycle surface derives the complete six-plugin inventory', () => {
+  const inventory = readJson(
+    '.github/skills/plugin-management/resources/constellation-inventory.json');
+  assert.deepEqual(inventory.plugins.map((entry) => entry.name), constellationPluginNames);
+  assert.equal(inventory.plugins.filter((entry) => entry.installBySetup).length, 5);
+
+  const consumers = [
+    '.github/skills/install-constellation/SKILL.md',
+    '.github/skills/uninstall-constellation/SKILL.md',
+    '.github/skills/update-plugins/SKILL.md',
+    '.github/prompts/install-constellation.prompt.md',
+    '.github/prompts/plugin-status.prompt.md',
+  ];
+  for (const relativePath of consumers) {
+    const content = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    assert.match(content, /constellation-inventory\.json/, `${relativePath} ignores inventory`);
+    for (const name of constellationPluginNames) {
+      assert.match(content, new RegExp(name), `${relativePath} omits ${name}`);
+    }
+  }
+
+  const installPrompt = fs.readFileSync(path.join(
+    repoRoot, '.github', 'prompts', 'install-constellation.prompt.md'), 'utf8');
+  assert.match(installPrompt,
+    /Core, Illustrator, Document Tools, Enterprise, MSFT/);
+  const uninstall = fs.readFileSync(path.join(
+    repoRoot, '.github', 'skills', 'uninstall-constellation', 'SKILL.md'), 'utf8');
+  assert.match(uninstall,
+    /copilot plugin install alex-act-manager@alex-mall[\s\S]*copilot plugin install alex-act-core@alex-mall/);
+});
+
+test('living Manager guidance uses sixteen-file and Manager-owned namespaces', () => {
+  const living = [
+    '.github/copilot-instructions.md',
+    '.github/skills/install-constellation/SKILL.md',
+    '.github/skills/uninstall-constellation/SKILL.md',
+    '.github/skills/install-constellation/bootstrap/alex-act-greeting-checkin.instructions.md',
+  ].map((relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')).join('\n');
+  assert.doesNotMatch(living, /\bSeventeen\b|\b17 (?:bootstrap |instruction )?files\b/i);
+  assert.doesNotMatch(living, /\/alex-act-core plugin-status/);
+});
+
+test('settings verification delegates to the deterministic Manager preview', () => {
+  const prompt = fs.readFileSync(path.join(
+    repoRoot, '.github', 'prompts', 'configure-vscode-verify.prompt.md'), 'utf8');
+  assert.match(prompt, /manager-operations\.cjs["' ]+configure-vscode/);
+  assert.doesNotMatch(prompt, /JSON\.parse|ConvertFrom-Json/);
+});
+
 test('bootstrap bundle contains sixteen Core-owned instruction resources', () => {
   const bootstrap = path.join(repoRoot, '.github', 'skills', 'install-constellation', 'bootstrap');
   const files = fs.readdirSync(bootstrap).filter((name) => name.endsWith('.instructions.md')).sort();
@@ -223,7 +281,6 @@ test('installable source stays below the Windows payload ceiling', () => {
   }
   for (const root of roots) collect(path.join(repoRoot, root));
   assert(files.length <= 100, `${files.length} installable files exceed the 100-file ceiling`);
-  assert.equal(files.length, 32, 'unexpected installable source file count');
 });
 
 test('workspace bootstrap is self-contained and preview-only by default', (t) => {
@@ -312,6 +369,66 @@ test('user baseline apply fails closed on comment-rich JSONC', (t) => {
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /contain comments/);
   assert.equal(fs.readFileSync(settings, 'utf8'), original);
+});
+
+test('JSONC parsing preserves comment-like and trailing-comma-like string content', (t) => {
+  const target = fs.mkdtempSync(path.join(os.tmpdir(), 'manager-jsonc-strings-'));
+  t.after(() => fs.rmSync(target, { recursive: true, force: true }));
+  const settings = path.join(target, 'settings.json');
+  const expected = {
+    'audit.url': 'https://example.com/path',
+    'audit.block': '/* literal text */',
+    'audit.objectMarker': ',}',
+    'audit.arrayMarker': ',]',
+  };
+  fs.writeFileSync(settings, `${JSON.stringify(expected, null, 2)}\n`);
+  const script = path.join(
+    repoRoot, '.github', 'skills', 'plugin-management', 'scripts', 'manager-operations.cjs');
+
+  const result = spawnSync(process.execPath, [
+    script, 'configure-vscode', '--target-settings', settings, '--apply',
+  ], { cwd: repoRoot, encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  const applied = JSON.parse(fs.readFileSync(settings, 'utf8'));
+  for (const [key, value] of Object.entries(expected)) assert.equal(applied[key], value);
+});
+
+test('workspace bootstrap fails closed without erasing JSONC comments', (t) => {
+  const target = fs.mkdtempSync(path.join(os.tmpdir(), 'manager-workspace-jsonc-'));
+  t.after(() => fs.rmSync(target, { recursive: true, force: true }));
+  const vscode = path.join(target, '.vscode');
+  fs.mkdirSync(vscode, { recursive: true });
+  const settings = path.join(vscode, 'settings.json');
+  const original = '// preserve this workspace comment\n{"editor.fontSize": 15}\n';
+  fs.writeFileSync(settings, original);
+  const script = path.join(
+    repoRoot, '.github', 'skills', 'plugin-management', 'scripts', 'manager-operations.cjs');
+
+  const result = spawnSync(process.execPath, [
+    script, 'bootstrap-workspace', '--target', target, '--apply',
+  ], { cwd: repoRoot, encoding: 'utf8' });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /contain comments/);
+  assert.equal(fs.readFileSync(settings, 'utf8'), original);
+});
+
+test('workspace bootstrap removes every broad .vscode ignore rule', (t) => {
+  const target = fs.mkdtempSync(path.join(os.tmpdir(), 'manager-gitignore-'));
+  t.after(() => fs.rmSync(target, { recursive: true, force: true }));
+  execFileSync('git', ['init'], { cwd: target, stdio: 'ignore' });
+  fs.writeFileSync(path.join(target, '.gitignore'), '.vscode/\n/.vscode/\n');
+  const script = path.join(
+    repoRoot, '.github', 'skills', 'plugin-management', 'scripts', 'manager-operations.cjs');
+
+  execFileSync(process.execPath, [
+    script, 'bootstrap-workspace', '--target', target, '--apply',
+  ], { cwd: repoRoot, encoding: 'utf8' });
+  const ignore = fs.readFileSync(path.join(target, '.gitignore'), 'utf8');
+  assert.doesNotMatch(ignore, /^(?:\/)?\.vscode\/?$/m);
+  const check = spawnSync('git', ['check-ignore', '--quiet', '.vscode/settings.json'], {
+    cwd: target,
+  });
+  assert.equal(check.status, 1, ignore);
 });
 
 test('marketplace resolver selects exact records and fails closed', (t) => {

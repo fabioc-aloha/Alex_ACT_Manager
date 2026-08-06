@@ -34,16 +34,21 @@ For each installed plugin, in order:
 
 Exposed for the `greeting-checkin` instruction (added 2026-08-01) to run its silent update-availability check on session greetings. Also used internally by this skill for the pre-update version diff.
 
-**Endpoint**: `https://raw.githubusercontent.com/fabioc-aloha/Alex_Skill_Mall/main/catalog/index.json` (approximately 2 MB, refreshed weekly by the Mall's cron per ADR-008).
+Load the canonical lifecycle set from
+[`constellation-inventory.json`](../plugin-management/resources/constellation-inventory.json):
+`alex-act-manager`, `alex-act-core`, `alex-act-illustrator-plugin`,
+`alex-act-document-tools`, `alex-act-enterprise`, and `alex-act-msft`.
+
+**Endpoint**: `https://raw.githubusercontent.com/fabioc-aloha/Alex_Skill_Mall/main/.github/plugin/marketplace.json`. This is the exact install manifest. The flattened catalog remains discovery-only and is not version authority.
 
 **Fetch pattern**:
 
 ```powershell
-# PowerShell example — the actual invocation delegates to the LLM tool of choice (web_fetch, curl, etc.)
-$catalog = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fabioc-aloha/Alex_Skill_Mall/main/catalog/index.json" -TimeoutSec 5 | Select-Object -ExpandProperty Content | ConvertFrom-Json
+node <plugin-management-skill>/scripts/manager-operations.cjs marketplace-versions `
+	--plugins alex-act-manager,alex-act-core,alex-act-illustrator-plugin,alex-act-document-tools,alex-act-enterprise
 ```
 
-**Parse pattern**: the catalog's top-level structure is `{ "schema_version": ..., "plugin_count": ..., "plugins": [...] }`. Each `plugins[]` entry carries `{ name, store, version, ... }`. Look up the entry for each installed constellation plugin by name; the catalog's `version` field is the current latest.
+For private `alex-act-msft`, read authenticated source `plugin.json` metadata through `gh api`; it has no public marketplace record.
 
 **Timeout**: 5 seconds. If the fetch fails (network error, timeout, non-2xx response), treat as "no update info available" and skip the update-diff step entirely. Do NOT tell the user "couldn't check updates" — that's noise for a check they never asked for.
 
@@ -67,7 +72,7 @@ Prerelease tags (`v1.2.0-rc.1`, `v1.2.0-beta`) do not qualify. This skill does n
 
 ## CHANGELOG reading
 
-For each constellation plugin (`alex-act-core`, `alex-act-illustrator-plugin`, `alex-act-enterprise`, `alex-act-msft`), fetch the CHANGELOG.md from the plugin's GitHub repo default branch. Parse in Keep-a-Changelog format:
+For each constellation plugin (`alex-act-manager`, `alex-act-core`, `alex-act-illustrator-plugin`, `alex-act-document-tools`, `alex-act-enterprise`, `alex-act-msft`), fetch the CHANGELOG.md from its verified source repository. Parse in Keep-a-Changelog format:
 
 ```
 ## [Unreleased]

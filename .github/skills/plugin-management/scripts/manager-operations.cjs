@@ -74,12 +74,13 @@ function sha256(value) {
   return crypto.createHash('sha256').update(value).digest('hex');
 }
 
-function stripJsonc(text) {
+function analyzeJsonc(text) {
   let output = '';
   let inString = false;
   let escaped = false;
   let lineComment = false;
   let blockComment = false;
+  let hadComments = false;
 
   for (let index = 0; index < text.length; index++) {
     const character = text[index];
@@ -109,16 +110,47 @@ function stripJsonc(text) {
       inString = true;
       output += character;
     } else if (character === '/' && next === '/') {
+      hadComments = true;
       lineComment = true;
       index++;
     } else if (character === '/' && next === '*') {
+      hadComments = true;
       blockComment = true;
       index++;
     } else {
       output += character;
     }
   }
-  return output.replace(/,\s*([}\]])/g, '$1');
+
+  let normalized = '';
+  inString = false;
+  escaped = false;
+  for (let index = 0; index < output.length; index++) {
+    const character = output[index];
+    if (inString) {
+      normalized += character;
+      if (escaped) escaped = false;
+      else if (character === '\\') escaped = true;
+      else if (character === '"') inString = false;
+      continue;
+    }
+    if (character === '"') {
+      inString = true;
+      normalized += character;
+      continue;
+    }
+    if (character === ',') {
+      let nextIndex = index + 1;
+      while (/\s/.test(output[nextIndex] || '')) nextIndex++;
+      if (output[nextIndex] === '}' || output[nextIndex] === ']') continue;
+    }
+    normalized += character;
+  }
+  return { text: normalized, hadComments };
+}
+
+function stripJsonc(text) {
+  return analyzeJsonc(text).text;
 }
 
 function isLocalStylesheet(value) {
@@ -151,9 +183,10 @@ function buildUserSettingsPlan(targetSettings, apply, removeLocalCss = false) {
   let hadComments = false;
   if (existed) {
     const raw = fs.readFileSync(settingsFile, 'utf8');
-    hadComments = /\/\/|\/\*/.test(raw);
     try {
-      current = JSON.parse(stripJsonc(raw)) || {};
+      const parsed = analyzeJsonc(raw);
+      hadComments = parsed.hadComments;
+      current = JSON.parse(parsed.text) || {};
     } catch (error) {
       throw new Error(`${settingsFile} is not valid JSON/JSONC: ${error.message}`);
     }
@@ -209,9 +242,10 @@ function mergeWorkspaceSettings(workspaceRoot, baseline = WORKSPACE_BASELINE) {
   let hadComments = false;
   if (existed) {
     const raw = fs.readFileSync(settingsFile, 'utf8');
-    hadComments = /\/\/|\/\*/.test(raw);
     try {
-      existing = JSON.parse(stripJsonc(raw)) || {};
+      const parsed = analyzeJsonc(raw);
+      hadComments = parsed.hadComments;
+      existing = JSON.parse(parsed.text) || {};
     } catch (error) {
       return { ok: false, error: `${settingsFile} is not valid JSON/JSONC: ${error.message}` };
     }
@@ -248,16 +282,18 @@ function planGitignore(target) {
   const original = fs.readFileSync(file, 'utf8');
   const lines = original.split(/\r?\n/);
   const broad = /^(?:\/)?\.vscode\/?$/;
-  const index = lines.findIndex((line) => broad.test(line.trim()));
-  if (index < 0) return { action: 'none', file, content: original, changes: [] };
+  const indexes = lines.flatMap((line, index) => broad.test(line.trim()) ? [index] : []);
+  if (!indexes.length) return { action: 'none', file, content: original, changes: [] };
 
-  lines.splice(index, 1, '.vscode/*', '!.vscode/settings.json', '!.vscode/markdown-light.css');
-  const content = `${lines.join('\n').replace(/\n+$/, '')}\n`;
+  const reconciled = lines.filter((line) => !broad.test(line.trim()));
+  reconciled.splice(indexes[0], 0,
+    '.vscode/*', '!.vscode/settings.json', '!.vscode/markdown-light.css');
+  const content = `${reconciled.join('\n').replace(/\n+$/, '')}\n`;
   return {
     action: 'narrow-vscode-rule',
     file,
     content,
-    changes: ['replace broad .vscode ignore with two tracked-file exceptions'],
+    changes: [`replace ${indexes.length} broad .vscode ignore rule(s) with two tracked-file exceptions`],
   };
 }
 
@@ -305,6 +341,9 @@ function buildWorkspacePlan(target, apply, refreshCss = false) {
 }
 
 function applyWorkspacePlan(plan) {
+  if (plan.settings.hadComments && plan.settings.action !== 'preserve') {
+    throw new Error('workspace settings contain comments; merge the reported keys in the VS Code JSONC editor to preserve them');
+  }
   if (plan.css.action === 'create' || plan.css.action === 'refresh') {
     fs.mkdirSync(path.dirname(plan.css.destination), { recursive: true });
     const temporary = `${plan.css.destination}.tmp-${process.pid}`;
@@ -383,6 +422,7 @@ if (require.main === module) {
 module.exports = {
   DEFAULT_MARKETPLACE_URL,
   WORKSPACE_BASELINE,
+  analyzeJsonc,
   applyUserSettingsPlan,
   applyWorkspacePlan,
   buildUserSettingsPlan,

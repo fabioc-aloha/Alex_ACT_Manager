@@ -91,13 +91,17 @@
         "path": ".github/skills/plugin-management/resources/welcome-baseline.json"
       },
       {
+        "name": "constellation-inventory.json",
+        "path": ".github/skills/plugin-management/resources/constellation-inventory.json"
+      },
+      {
         "name": "markdown-light.css",
         "path": ".github/skills/bootstrap-workspace/resources/markdown-light.css"
       }
     ]
   },
   "distribution": {
-    "expected_payload_files": 36,
+    "payload_surface": "repository-at-release-tag",
     "status": "published"
   },
   "authority": {

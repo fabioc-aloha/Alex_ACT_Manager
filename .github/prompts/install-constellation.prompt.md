@@ -13,9 +13,9 @@ skill or plugin is missing based only on the skill tool's inventory.
 Steps:
 
 1. Verify Copilot CLI version (`copilot --version` >= 1.0.75); if missing or too old, stop.
-2. Run `copilot plugin list` to detect installed versions. Resolve the exact current public versions from `alex-mall`'s `.github/plugin/marketplace.json` through the plugin-management version script; do not infer versions from flattened `marketplace browse` output.
+2. Load the canonical six-plugin lifecycle inventory from [`constellation-inventory.json`](../skills/plugin-management/resources/constellation-inventory.json): `alex-act-manager`, `alex-act-core`, `alex-act-illustrator-plugin`, `alex-act-document-tools`, `alex-act-enterprise`, and `alex-act-msft`. Manager is already installed; the other five entries are setup targets. Run `copilot plugin list` to detect installed versions. Resolve exact current public versions from `alex-mall`'s `.github/plugin/marketplace.json` through the plugin-management version script; do not infer versions from flattened `marketplace browse` output.
 3. Ask which plugins to install and tenant-check MSFT (Microsoft employee and on corporate network) before including it.
-4. Register `alex-mall` if needed, then install approved plugins in order: Core, Illustrator, Enterprise, MSFT.
+4. Register `alex-mall` if needed, then install approved setup targets in order: Core, Illustrator, Document Tools, Enterprise, MSFT.
 5. Merge `enabledPlugins` without replacing existing entries. Set every selected installed plugin `true` at user scope. Marketplace keys use `<plugin>@alex-mall`; direct MSFT uses the bare key `alex-act-msft`.
 6. Verify each install through `copilot plugin list`, settings, and the corresponding installed `plugin.json` tree.
 7. Audit the portable VS Code user baseline. Show missing and drifted keys, then ask for separate user-settings consent before invoking `/alex-act-manager configure-vscode`. Do not copy Fabio-specific editor preferences. If user `markdown.styles` contains a local absolute path, report it and separately offer removal; never substitute another local absolute path.

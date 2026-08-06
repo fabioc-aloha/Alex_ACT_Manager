@@ -7,6 +7,19 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## [Unreleased]
 
+### Fixed
+
+- Made JSONC parsing string-aware for comments and trailing commas, and made
+  workspace bootstrap fail closed before writing comment-rich settings.
+- Centralized the six-plugin lifecycle inventory and reconciled install,
+  status, update, uninstall, and reinstall guidance, including Document Tools
+  and Manager ownership.
+- Reconciled every broad `.vscode` ignore rule instead of only the first.
+- Routed settings verification and Alex Mall version checks through Manager's
+  deterministic runtime, removed stale exact payload counts, and corrected the
+  greeting status namespace in Core source and the bootstrap mirror.
+- Added focused regressions and standalone CI against immutable Core `v1.0.0`.
+
 ### Changed
 
 - README: the 100-file figure is now stated as this constellation's own

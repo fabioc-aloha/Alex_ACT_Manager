@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "plugins": [
+    {
+      "name": "alex-act-manager",
+      "identifier": "alex-act-manager@alex-mall",
+      "distribution": "alex-mall",
+      "installBySetup": false,
+      "order": 0
+    },
+    {
+      "name": "alex-act-core",
+      "identifier": "alex-act-core@alex-mall",
+      "distribution": "alex-mall",
+      "installBySetup": true,
+      "order": 1
+    },
+    {
+      "name": "alex-act-illustrator-plugin",
+      "identifier": "alex-act-illustrator-plugin@alex-mall",
+      "distribution": "alex-mall",
+      "installBySetup": true,
+      "order": 2
+    },
+    {
+      "name": "alex-act-document-tools",
+      "identifier": "alex-act-document-tools@alex-mall",
+      "distribution": "alex-mall",
+      "installBySetup": true,
+      "order": 3
+    },
+    {
+      "name": "alex-act-enterprise",
+      "identifier": "alex-act-enterprise@alex-mall",
+      "distribution": "alex-mall",
+      "installBySetup": true,
+      "order": 4
+    },
+    {
+      "name": "alex-act-msft",
+      "identifier": "alex-act-msft",
+      "distribution": "fabioc_microsoft/alex-act-msft",
+      "installBySetup": true,
+      "order": 5
+    }
+  ]
+}

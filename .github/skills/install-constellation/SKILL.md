@@ -42,6 +42,11 @@ scope. Alex ACT does not manage per-workspace plugin activation.
 
 Per [`PLUGIN-INTEGRATION.md`](https://github.com/fabioc-aloha/Alex_ACT_Core/blob/main/INSTALL.md) § 2, selected constellation plugins install at **user scope** and remain active across workspaces:
 
+Load the canonical six-plugin lifecycle inventory from
+[`constellation-inventory.json`](../plugin-management/resources/constellation-inventory.json).
+Manager is the already-running lifecycle owner; the other five entries with
+`installBySetup: true` are the setup targets below.
+
 | Order | Plugin | Distribution | Tenant check | Purpose |
 |---|---|---|---|---|
 | 1 | `alex-act-core` | `alex-mall` marketplace | None | Always-on epistemic discipline — every heir installs Core first |
@@ -356,7 +361,7 @@ Then report:
 
 The skill is safe to re-run. On subsequent runs:
 
-- If all four (or three) plugins are already installed at their latest version, report "constellation is current — nothing to install" and exit.
+- If all five setup targets selected by the heir are already installed at their latest version, report "constellation is current — nothing to install" and exit.
 - If some are missing, install only the missing ones.
 - If any are at a lower version than what the marketplace currently ships, defer to `update-plugins` — this skill installs, it does not update.
 - The discipline bootstrap has its own idempotency check, keyed on the receipt's `coreVersion`. A current constellation with a stale bootstrap receipt still warrants re-running Step 7.
@@ -366,7 +371,7 @@ The skill is safe to re-run. On subsequent runs:
 
 | Anti-pattern | Correction |
 |---|---|
-| Install all four without asking about MSFT tenant | Always tenant-check MSFT; default is "not installed" without explicit yes |
+| Install all five setup targets without asking about MSFT tenant | Always tenant-check MSFT; default is "not installed" without explicit yes |
 | Install at repo scope by default | Constellation plugins are user scope. Repo scope is for downstream Microsoft plugins (Azure, Fabric, etc.) — different skill (`setup-enterprise-stack`) does that. |
 | Skip Core and install Illustrator standalone | Core is the baseline; Illustrator and the setup skills reference `plugin-management` which ships in Core. Do not skip Core. |
 | Install MSFT on a public tenant | MSFT is Microsoft-internal only. Fail closed on the tenant check. |
@@ -376,7 +381,7 @@ The skill is safe to re-run. On subsequent runs:
 | Write bootstrap files without the `alex-act-` prefix | A bare `act-pass.instructions.md` can clobber the heir's own file. Prefix always. |
 | Skip the overlap scan because the workspace "probably" has no brain | Scopes compose. Scan, then report the real number. |
 | Uninstall by globbing `~/.copilot/instructions/*` | Read the receipt. The heir's own instructions live in that folder too. |
-| Bootstrap all of Core's unconditional instructions | Seventeen only. The remaining instructions do not earn unconditional user-scope cost. |
+| Bootstrap all of Core's instructions | Sixteen only. The remaining source instruction does not earn unconditional user-scope cost. |
 | Assume the instruction files are somewhere on disk without checking | Resolve the source explicitly per the Source table. A Mall install vendors no `.github/instructions/`; only the skill-bundled `bootstrap/` is guaranteed. This shipped broken in v0.2.0. |
 | Fetch the instruction files from GitHub when the local source is missing | Never. A missing source is a packaging defect and must be reported as one, not papered over with a network call that can fail, hang, or pull an unpinned version. |
 | Copy Steward's entire `.vscode/settings.json` into every user's profile | Apply only the portable baseline. Fabio-specific editor preferences and extension paths are not constellation policy. |
