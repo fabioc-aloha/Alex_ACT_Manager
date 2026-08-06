@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           repository: fabioc-aloha/Alex_ACT_Core
-          ref: 4d4439b2ec96c70347b1fe0412abcf47b9c685f6
+          ref: 0aecdb105ba0c285fa88997ca2ea0398a79332e4
           path: Alex_ACT_Core
       - name: Set up Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6

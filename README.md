@@ -8,7 +8,7 @@ Alex ACT Manager keeps lifecycle work out of the reasoning runtime. Setup, repai
 
 ## Status
 
-**Released as `v1.0.0`.** The bootstrap carries 16 files and Shared Memory
+**Released as `v1.0.1`.** The bootstrap carries 16 files and Shared Memory
 routing is removed. Source:
 [`fabioc-aloha/Alex_ACT_Manager`](https://github.com/fabioc-aloha/Alex_ACT_Manager).
 Install from the Alex ACT Mall as `alex-act-manager@alex-mall`.
@@ -18,8 +18,8 @@ user selects is installed and enabled at user scope across workspaces.
 
 Approved Core source no longer declares Manager's five lifecycle skill names.
 Core retains only seven thin namespaced command redirects until the
-compatibility window closes. Published Core 0.9.0 still carries the old skill
-copies until its separately gated release and Mall refresh.
+compatibility window closes. Published Core 1.0.1 carries only the thin
+Manager redirects.
 
 ## Install
 
@@ -69,7 +69,7 @@ workspace behavior.
 Approved Manager source bundles 16 instruction resources copied byte-for-byte
 from current `Alex_ACT_Core` source. Core remains their authority. Manager
 packages and installs them; it does not fork their content. The test suite fails
-if a local Core checkout exposes drift. Manager v1.0.0 ships the 16-file
+if a local Core checkout exposes drift. Manager v1.0.1 ships the 16-file
 contract; installed receipts refresh on the next plugin update and bootstrap
 repair.
 

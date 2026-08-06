@@ -1,6 +1,6 @@
 {
   "plugin": "alex-act-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "shape": "five-skill + seven-prompt + sixteen-bootstrap-resources + three-resources",
   "status": "released",
   "description": "Lifecycle control plane extracted from Alex ACT Core so infrequent setup, repair, update, and removal work does not consume baseline reasoning payload capacity.",
