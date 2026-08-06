@@ -1,7 +1,7 @@
 ---
-description: "PII filter at memory write boundaries — prevent sensitive data from entering persistent storage tiers"
+description: "PII filter at native memory write boundaries — prevent sensitive data from entering persistent user, repository, and session memory"
 applyTo: "**"
-lastReviewed: 2026-07-11
+lastReviewed: 2026-08-05
 ---
 
 # PII Memory Filter
@@ -19,13 +19,9 @@ This filter applies whenever you write to ANY persistent tier:
 | User Memory | `memory create /memories/` | Yes (200 lines) |
 | Repo Memory | `memory create /memories/repo/` | No |
 | Session Memory | `memory create /memories/session/` | No |
-| Shared Memory — announcements | File creation in `../Alex_ACT_Memory/announcements/` | No |
-| Shared Memory — feedback | File creation in `../Alex_ACT_Memory/feedback/` | No |
-| Shared Memory — knowledge | File creation in `../Alex_ACT_Memory/knowledge/` | No |
-| Shared Memory — insights | File creation in `../Alex_ACT_Memory/insights/` | No |
-| Shared Memory — profile (encrypted) | Envelope write to `../Alex_ACT_Memory/profile/<user>/*.encrypted.json` | No |
 
-For tier *selection* (where content goes), see the `memory-triggers` instruction. This filter constrains *what* may be written; MT constrains *where*. Only the five channels above are approved on the shared bus; ad-hoc paths (for example a shared `notes.md`) fail Memory's strict validator.
+This instruction constrains what may enter the host's native memory tiers. It
+does not select a storage tier or authorize an external profile or shared bus.
 
 ## Never Write These Categories
 
@@ -51,9 +47,6 @@ Before writing to ANY persistent tier, verify the content does NOT contain:
 | **User Memory** | Workflow preferences, communication style, tool patterns | Any PII, project-specific data |
 | **Repo Memory** | Build commands, code conventions, architecture facts | Credentials, user identity |
 | **Session Memory** | Task context, file references, in-progress state | Health data, financial data |
-| **Shared memory knowledge** | Patterns, insights, technical knowledge | Contact info, health data |
-| **Shared memory announcements** | Upgrade notices, breaking changes | No PII by design |
-| **Shared memory feedback** | Skill name + category + severity (structured schema only) | Free-text context with domain data |
 
 ## Self-Check Protocol
 
@@ -67,7 +60,7 @@ Before writing to persistent storage, ask:
 
 When the user asks to store something containing PII:
 
-- **Contact info** → With user approval, store only in `../Alex_ACT_Memory/profile/<username>/user-profile.encrypted.json` (L3, encrypted, on-demand only, never auto-loaded)
+- **Contact info** → Do not store it in native persistent memory. Use a user-approved protected system designed for contact data, or decline the write.
 - **Health data** → Decline. Explain no memory tier is appropriate for L4 health data.
 - **Credentials** → Direct to VS Code SecretStorage or environment variables
 - **Work patterns** → Generalize: "prefers TDD" not "wrote 47 tests on Tuesday"

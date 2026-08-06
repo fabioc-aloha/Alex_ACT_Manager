@@ -25,29 +25,30 @@ The skill runs in one of three modes depending on how it was invoked:
 | **Manual** (default) | Heir types `/alex-act-manager install-constellation` explicitly | Full consent flow: install selection, tenant check, user settings, bootstrap, repository CSS, and verification. All Steps 1-9 fire. |
 | **Auto-invoked from greeting-checkin** | Greeting detected incomplete brain state and user approved repair | Greeting Y covers brain-spine repair only. User settings, bootstrap, and repository files retain separate consent gates because they affect different scopes. |
 | **Repair** | Heir invoked manually AND state check finds partial residue (bootstrap files without matching plugin, orphan receipt) | Confirm intent to complete partial install; skip installs of plugins already present at target version. |
-| **Bootstrap-only repair** | All plugin versions, enabled keys, manifests, stable user settings, and current-workspace files match, but the receipt or one of its seventeen files is missing, stale, or hash-mismatched | Skip plugin selection, marketplace registration, installation, user-settings audit, and workspace bootstrap. Show the bootstrap delta and go directly to the separate Step 7 consent gate. |
+| **Bootstrap-only repair** | All plugin versions, enabled keys, manifests, stable user settings, and current-workspace files match, but the receipt or one of its sixteen files is missing, stale, or hash-mismatched | Skip plugin selection, marketplace registration, installation, user-settings audit, and workspace bootstrap. Show the bootstrap delta and go directly to the separate Step 7 consent gate. |
 
 The three modes converge on the same underlying steps. What differs is which consent gates fire and how the report frames the outcome.
 
 `greeting-checkin` is a post-bootstrap convenience, not a first-install entry
-point. It is one of the seventeen files copied by Step 7, so a machine with no
+point. It is one of the sixteen files copied by Step 7, so a machine with no
 prior bootstrap cannot route a greeting through this skill.
 
 For greeting-time brain repair, do not treat optional plugins as missing brain
-components. Manager, Core, and the seventeen-file bootstrap are the spine.
+components. Manager, Core, and the sixteen-file bootstrap are the spine.
 Optional plugins selected by the user remain installed and enabled at user
 scope. Alex ACT does not manage per-workspace plugin activation.
 
-## The four constellation plugins
+## The five setup targets
 
-Per [`PLUGIN-INTEGRATION.md`](https://github.com/fabioc-aloha/Alex_ACT_Core/blob/main/INSTALL.md) § 2, all four install at **user scope** (they describe *who the heir is*, not *what any single project needs*):
+Per [`PLUGIN-INTEGRATION.md`](https://github.com/fabioc-aloha/Alex_ACT_Core/blob/main/INSTALL.md) § 2, selected constellation plugins install at **user scope** and remain active across workspaces:
 
 | Order | Plugin | Distribution | Tenant check | Purpose |
 |---|---|---|---|---|
 | 1 | `alex-act-core` | `alex-mall` marketplace | None | Always-on epistemic discipline — every heir installs Core first |
 | 2 | `alex-act-illustrator-plugin` | `alex-mall` marketplace | None | Visual authoring: charts, docs shells, SVG banners, print figures, AI imagery |
-| 3 | `alex-act-enterprise` | `alex-mall` marketplace | None | Config-template plugin for the public Microsoft ecosystem (Azure, Fabric, Power BI, M365) |
-| 4 | `alex-act-msft` | **Direct install** from private GitHub (`fabioc_microsoft/alex-act-msft`), gated by `gh auth` | **Microsoft-internal only** | Agency framework + config template for internal Microsoft plugins (WorkIQ, org-report). Never published to any mall. |
+| 3 | `alex-act-document-tools` | `alex-mall` marketplace | None | Optional Markdown, HTML, Word, email, and plain-text conversion |
+| 4 | `alex-act-enterprise` | `alex-mall` marketplace | None | Config-template plugin for the public Microsoft ecosystem (Azure, Fabric, Power BI, M365) |
+| 5 | `alex-act-msft` | **Direct install** from private GitHub (`fabioc_microsoft/alex-act-msft`), gated by `gh auth` | **Microsoft-internal only** | Agency framework + config template for internal Microsoft plugins (WorkIQ, org-report). Never published to any mall. |
 
 ## Install order
 
@@ -55,8 +56,9 @@ Always in the order shown above. Rationale:
 
 1. **Core first** — Core carries `plugin-management` (this skill's dependency) and the always-on discipline every subsequent plugin composes with.
 2. **Illustrator second** — visual authoring is broadly useful; no dependency on Enterprise / MSFT.
-3. **Enterprise third** — the `setup-enterprise-stack` skill helps heirs enable the public Microsoft ecosystem when a project needs it.
-4. **MSFT last, conditional** — only install if the heir confirms they are a Microsoft employee and on the corporate network. Never install by default.
+3. **Document Tools third** — optional conversion no longer ships in Core.
+4. **Enterprise fourth** — the `setup-enterprise-stack` skill helps heirs enable the public Microsoft ecosystem when a project needs it.
+5. **MSFT last, conditional** — only install if the heir confirms they are a Microsoft employee and on the corporate network. Never install by default.
 
 If a plugin is already installed at the target version, skip it and continue with the next one. Report what was skipped alongside what was installed.
 
@@ -64,7 +66,7 @@ Resolve target versions deterministically before deciding that a marketplace plu
 
 ```powershell
 node <plugin-management-skill>/scripts/manager-operations.cjs marketplace-versions `
-  --plugins alex-act-core,alex-act-illustrator-plugin,alex-act-enterprise
+  --plugins alex-act-core,alex-act-illustrator-plugin,alex-act-document-tools,alex-act-enterprise
 ```
 
 This reads exact records from `alex-mall`'s `.github/plugin/marketplace.json`. `marketplace browse` proves reachability and supports discovery; it is not authoritative for versions. For private MSFT, use its authenticated source `plugin.json` through `gh api`.
@@ -83,11 +85,11 @@ Nine marketplace plugins compose to deliver visual-authoring workflows (chart re
 
 ### Step 1 — Confirm the target list
 
-Print the four-plugin table above. Ask the heir:
+Print the five-target table above. Ask the heir:
 
-> "Install the Alex ACT constellation? I will install these four plugins at user scope. Reply 'all four', 'just Core + Illustrator', or name specific plugins."
+> "Complete Alex ACT setup? Core is required. Choose any optional targets: Illustrator, Document Tools, Enterprise, or MSFT. Reply 'all eligible', 'just Core', or name specific plugins."
 
-Default to "all four" if the heir just says "yes". Never install `alex-act-msft` without an explicit tenant confirmation in Step 2.
+Default to all public targets if the heir just says "yes". Never install `alex-act-msft` without an explicit tenant confirmation in Step 2.
 
 **Do not** offer visual-workflow companions in Step 1 — they are a Step 9 follow-up **via Illustrator's `/alex-act-illustrator-plugin install-visual-companions` command (owner: `alex-act-illustrator-plugin` v0.6.0+)**. Bundling them into the constellation install dilutes the consent flow.
 
@@ -116,6 +118,7 @@ Run the install commands in order:
 ```powershell
 copilot plugin install alex-act-core@alex-mall
 copilot plugin install alex-act-illustrator-plugin@alex-mall
+copilot plugin install alex-act-document-tools@alex-mall
 copilot plugin install alex-act-enterprise@alex-mall
 # Only if MSFT check passed both (Microsoft employee AND on corp network):
 copilot plugin install fabioc_microsoft/alex-act-msft
@@ -182,7 +185,12 @@ The close is to copy a scoped subset of Core's unconditional instructions to `~/
 
 #### What gets copied
 
-Seventeen files. Not all of Core's instructions, only those whose value depends on firing unconditionally. Five groups: the epistemic spine plus safety rails (the original seven-file set from v0.2.1), the six per-turn disciplines added in D5 (2026-07-31), the two added in D6 (2026-07-31: memory-triggers routes ledger writes, worldview carries harm-refusal and Tenet-IV ethics check that must fire before the first message), greeting-checkin added in the install-experience overhaul, and the concise Alex Finch personality contract added on 2026-08-01. Calculate and show the current byte total and token estimate from the files before asking for consent; do not preserve a stale hardcoded estimate.
+Sixteen files. Not all of Core's instructions, only those whose value depends
+on firing unconditionally. The set contains the epistemic spine, safety rails,
+per-turn disciplines, greeting check-in, worldview, and the concise Alex Finch
+personality contract. Shared Memory routing is not part of the baseline.
+Calculate and show the current byte total and token estimate from the files
+before asking for consent; do not preserve a stale hardcoded estimate.
 
 | Source in Core | Written as | Why it must be unconditional |
 |---|---|---|
@@ -200,17 +208,17 @@ Seventeen files. Not all of Core's instructions, only those whose value depends 
 | `reliance-nudges` | `alex-act-reliance-nudges.instructions.md` | Reads user *epistemic behavior* (verbatim acceptance, zero verification) on every message |
 | `session-health-monitoring` | `alex-act-session-health-monitoring.instructions.md` | Continuous context-capacity monitoring; per-conversation, not per-file |
 | `proactive-awareness` | `alex-act-proactive-awareness.instructions.md` | Session-boundary discipline; must fire *before* the user's first message |
-| `memory-triggers` | `alex-act-memory-triggers.instructions.md` | Detects correction / preference / handoff / decision triggers on every message; routing decisions cannot be recovered post-hoc |
 | `worldview` | `alex-act-worldview.instructions.md` | Harm-refusal and Tenet-IV ethics check must fire on every request regardless of file scope |
 | `greeting-checkin` | `alex-act-greeting-checkin.instructions.md` | Session-start orientation — verifies constellation health on greeting patterns and offers setup / drift refresh / update reminders through one consolidated consent gate; must fire before the user's first substantive turn |
 
-Core's remaining instructions stay plugin-resident and therefore inactive. Behavioral and craft instructions degrade gracefully when absent; these seventeen do not.
+Core's remaining instruction stays plugin-resident and therefore inactive.
+These sixteen do not degrade gracefully when absent.
 
 The `alex-act-` prefix is mandatory. A heir may already have their own `~/.copilot/instructions/act-pass.instructions.md`, and a collision would silently replace their file.
 
 #### Source — where the files come from
 
-The seventeen files ship **inside this skill** at `bootstrap/`, already carrying their `alex-act-` target names. The copy is a straight file copy; no renaming, no fetching, no network.
+The sixteen files ship **inside this skill** at `bootstrap/`, already carrying their `alex-act-` target names. The copy is a straight file copy; no renaming, no fetching, no network.
 
 Resolve the source in this order:
 
@@ -228,7 +236,7 @@ Source 1 exists because a Mall install vendors a component-shape subset (skills,
 
 #### Overlap scan, before writing anything
 
-Compare the seventeen target names against the current workspace's `.github/instructions/`. Instruction scopes **compose rather than replace**: user-scope and workspace-scope files both load into the same context, with no documented dedup. A heir whose workspace already carries `act-pass` would load it twice after the bootstrap, paying the tokens twice and risking two copies drifting apart.
+Compare the sixteen target names against the current workspace's `.github/instructions/`. Instruction scopes **compose rather than replace**: user-scope and workspace-scope files both load into the same context, with no documented dedup. A heir whose workspace already carries `act-pass` would load it twice after the bootstrap, paying the tokens twice and risking two copies drifting apart.
 
 If overlap is found, report it and recommend declining:
 
@@ -240,7 +248,7 @@ Report and recommend. Do not hard-block, because the heir may legitimately want 
 
 Print the exact file list, the byte total, and the token estimate. Then ask:
 
-> "Copy these seventeen instruction files to `~/.copilot/instructions/`? They will apply in **every** workspace on this machine, not only where Core is enabled. Current size: <calculated bytes and token estimate>. Reply yes, no, or 'list' to see the contents first."
+> "Copy these sixteen instruction files to `~/.copilot/instructions/`? They will apply in **every** workspace on this machine, not only where Core is enabled. Current size: <calculated bytes and token estimate>. Reply yes, no, or 'list' to see the contents first."
 
 Never bootstrap as a silent side effect of the install. Default is no.
 
@@ -268,7 +276,6 @@ After writing, record exactly what was placed at `~/.copilot/instructions/.alex-
     "alex-act-reliance-nudges.instructions.md",
     "alex-act-session-health-monitoring.instructions.md",
     "alex-act-proactive-awareness.instructions.md",
-    "alex-act-memory-triggers.instructions.md",
     "alex-act-worldview.instructions.md",
     "alex-act-greeting-checkin.instructions.md"
   ]
@@ -279,14 +286,14 @@ Uninstall reads this receipt. It never globs and deletes, because the heir's own
 
 #### Idempotency
 
-On re-run, compare the receipt's `coreVersion` against the installed Core version. Equal means skip and report "discipline bootstrap is current". Different means rewrite the seventeen files and update the receipt. Missing receipt with files present means a hand-edited state; report it and ask before touching anything.
+On re-run, compare the receipt's `coreVersion` against the installed Core version. Equal means skip and report "discipline bootstrap is current". Different means rewrite the sixteen files and update the receipt. Missing receipt with files present means a hand-edited state; report it and ask before touching anything.
 
 #### Verify
 
 Default verification is deterministic:
 
-1. Receipt owns exactly seventeen files and records the installed Core version.
-2. All seventeen destination files exist.
+1. Receipt owns exactly sixteen files and records the installed Core version.
+2. All sixteen destination files exist.
 3. Every destination SHA-256 equals its bundled source.
 4. No unrelated file in `~/.copilot/instructions/` is claimed by the receipt.
 
@@ -389,15 +396,15 @@ The skill is safe to re-run. On subsequent runs:
 
 Sunset or revise this skill by **2027-01-30** (6 months) if:
 
-- The Alex ACT constellation gains or loses a plugin — the four-plugin table goes stale on emit.
+- The Alex ACT constellation gains or loses a plugin — the five-target table goes stale on emit.
 - The default scope decision changes for any constellation plugin — the install-at-user default is wrong.
 - The tenant check for MSFT proves inadequate (heirs off-network complete the install and hit failures) — the check needs tightening.
 - **Copilot CLI or VS Code ships plugin-scope instruction discovery.** Step 7 becomes dead weight; delete it and the receipt machinery outright.
 - **The overlap scan reports a conflict on more than half of observed installs.** User scope is the wrong target for heirs who already run a repo brain; make the bootstrap opt-in per workspace instead.
-- **Heirs report ACT discipline or personality firing where they did not want it, twice or more.** The seventeen-file set is too broad; remove the lowest-value unconditional additions or make personality opt-in.
+- **Heirs report ACT discipline or personality firing where they did not want it, twice or more.** The sixteen-file set is too broad; remove the lowest-value unconditional additions or make personality opt-in.
 - The install order proves wrong (dependency inversion surfaces) — the order needs adjustment.
 - ≥2 heirs report the idempotent re-run pattern doing damage (deleting pre-existing entries, re-installing when already current) — merge algorithm needs a regression fix.
-- **The bundled `bootstrap/` drifts from `.github/instructions/`.** The seventeen files are copies, and copies rot. If a source instruction is edited without the bundled copy following, heirs bootstrap a stale rule. Either add a release check that diffs the two sets, or replace the copies with a build step that generates them.
+- **The bundled `bootstrap/` drifts from `.github/instructions/`.** The sixteen files are copies, and copies rot. If a source instruction is edited without the bundled copy following, heirs bootstrap a stale rule. Either add a release check that diffs the two sets, or replace the copies with a build step that generates them.
 - **Direct GitHub installs stop working or are removed by Copilot CLI.** The interim MSFT distribution path must move before the breaking release; do not wait for users to discover it during setup.
 - A workspace profile disables Manager or Core even once, or private identifiers are written without explicit acknowledgement.
 

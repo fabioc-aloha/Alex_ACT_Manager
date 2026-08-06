@@ -8,15 +8,18 @@ Alex ACT Manager keeps lifecycle work out of the reasoning runtime. Setup, repai
 
 ## Status
 
-**Released as `v0.4.0`.** Source:
+**Released as `v0.4.0`.** Approved unreleased source moves the bootstrap from
+17 files to 16 and removes Shared Memory routing. Source:
 [`fabioc-aloha/Alex_ACT_Manager`](https://github.com/fabioc-aloha/Alex_ACT_Manager).
 Install from the Alex ACT Mall as `alex-act-manager@alex-mall`.
 
 Manager and Core remain the mandatory brain spine. Every optional plugin the
 user selects is installed and enabled at user scope across workspaces.
 
-Core still owns and ships the compatibility lifecycle copies. Their removal is
-a separate Core release after the Manager route has adoption evidence.
+Approved Core source no longer declares Manager's five lifecycle skill names.
+Core retains only seven thin namespaced command redirects until the
+compatibility window closes. Published Core 0.9.0 still carries the old skill
+copies until its separately gated release and Mall refresh.
 
 ## Install
 
@@ -37,7 +40,7 @@ those concerns without becoming a second brain.
 | Core keeps | Manager owns |
 | --- | --- |
 | Alex Finch identity and ACT reasoning | Constellation installation and repair |
-| Safety, privacy, communication, and memory routing | Exact version resolution and status |
+| Safety, native-memory privacy, communication, and repository handoffs | Exact version resolution and status |
 | Frequent reasoning and engineering skills | Plugin update and uninstall |
 | Drift signals and a compact Manager route | Core instruction bootstrap |
 | Canonical source instructions | VS Code and repository workspace setup |
@@ -58,10 +61,12 @@ workspace behavior.
 
 ## Core-Owned Bootstrap
 
-Manager bundles 17 instruction resources copied byte-for-byte from
-`Alex_ACT_Core` commit `47ef71ccab23b5e43a0170cb0449708c5f91629b`.
-Core remains their authority. Manager packages and installs them; it does not
-fork their content. The test suite fails if a local Core checkout exposes drift.
+Approved Manager source bundles 16 instruction resources copied byte-for-byte
+from current `Alex_ACT_Core` source. Core remains their authority. Manager
+packages and installs them; it does not fork their content. The test suite fails
+if a local Core checkout exposes drift. Published Manager v0.4.0 and installed
+receipts remain on the 17-file contract until the separately gated release,
+Mall refresh, plugin update, and bootstrap repair complete.
 
 ## Development
 
@@ -76,7 +81,7 @@ and exact marketplace version resolution.
 
 ## Current Boundary
 
-This scaffold preserves current Core lifecycle behavior. Lock-safe external
+Manager is the sole lifecycle skill owner in approved source. Lock-safe external
 update scripts, atomic receipts, feature-delta reporting, and capability intent
 indexing remain planned enhancements. Their absence is not hidden by the source
 extraction.
@@ -89,7 +94,7 @@ or Core lifecycle removal without the normal consent and compatibility gates.
 
 ## Would Revise If
 
-Revisit by **2026-11-03** or sooner if Manager cannot install Core from an empty
-state, bootstrap resources repeatedly drift from Core, fewer than two real
-maintenance sessions use the plugin, or separating lifecycle work creates more
-operator ambiguity than the Core-integrated design.
+Revisit by **2026-11-05** or sooner if Manager cannot install Core from an empty
+state, bootstrap resources repeatedly drift from Core, a clean session resolves
+a lifecycle skill to Core, or separating lifecycle work creates more operator
+ambiguity than the duplicated design.

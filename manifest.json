@@ -1,7 +1,7 @@
 {
   "plugin": "alex-act-manager",
   "version": "0.4.0",
-  "shape": "five-skill + seven-prompt + seventeen-bootstrap-resources + three-resources",
+  "shape": "five-skill + seven-prompt + sixteen-bootstrap-resources + three-resources",
   "status": "released",
   "description": "Lifecycle control plane extracted from Alex ACT Core so infrequent setup, repair, update, and removal work does not consume baseline reasoning payload capacity.",
   "provenance": {
@@ -71,7 +71,6 @@
       "alex-act-epistemic-calibration.instructions.md",
       "alex-act-greeting-checkin.instructions.md",
       "alex-act-lint-discipline.instructions.md",
-      "alex-act-memory-triggers.instructions.md",
       "alex-act-no-deferred-debt.instructions.md",
       "alex-act-pii-memory-filter.instructions.md",
       "alex-act-proactive-awareness.instructions.md",
@@ -98,7 +97,7 @@
     ]
   },
   "distribution": {
-    "expected_payload_files": 37,
+    "expected_payload_files": 36,
     "status": "published"
   },
   "authority": {

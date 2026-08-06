@@ -7,6 +7,16 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## [Unreleased]
 
+### Changed
+
+- Became the sole source owner for `bootstrap-workspace`,
+  `install-constellation`, `plugin-management`, `uninstall-constellation`, and
+  `update-plugins`; Core retains namespaced command redirects only.
+- Reduced the default instruction bootstrap from 17 files to 16 and removed
+  Shared Memory routing from the Manager payload.
+- Narrowed the bootstrapped privacy filter to native user, repository, and
+  session memory while preserving repository handoff continuity.
+
 ## [0.4.0] - 2026-08-04
 
 ### Removed

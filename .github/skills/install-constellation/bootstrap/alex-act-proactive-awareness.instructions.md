@@ -1,7 +1,7 @@
 ---
 description: "Cross-session context recovery, uncommitted work detection, and proactive behaviors"
 applyTo: "**"
-lastReviewed: 2026-05-29
+lastReviewed: 2026-08-05
 ---
 
 # Proactive Awareness
@@ -14,8 +14,8 @@ Always-active unconscious behavior. Notice patterns, recover context, maintain c
 
 At the start of every conversation, before diving into the user's request:
 
-1. **Check repo-root `HANDOFF.md`** — the canonical cross-session handoff per the `memory-triggers` instruction. If present, scan for current state, in-progress items, next actions.
-2. **Check session memory** — Read `/memories/session/` directory as a legacy/secondary signal only. Session memory is by-design ephemeral and clears at conversation end; any handoff content here is a lower-tier signal than `HANDOFF.md`. Scan titles and status fields if present.
+1. **Check repo-root `HANDOFF.md`** — the canonical human-readable project handoff. If present, scan for current state, in-progress items, and next actions.
+2. **Check session memory** — Read `/memories/session/` as a secondary signal. Session memory is by-design ephemeral and clears at conversation end; any handoff content here is a lower-tier signal than `HANDOFF.md`. Scan titles and status fields if present.
 3. **Check dream reports (if available)** — If `.github/quality/dream-report.json` exists, note the last dream date and any issues. Skip silently if absent — not every project ships a dream pipeline.
 4. **Summarize briefly** — If relevant prior context exists (from `HANDOFF.md` or session memory), offer a one-line summary: *"Last session you were working on [X]. Want to continue?"*
 

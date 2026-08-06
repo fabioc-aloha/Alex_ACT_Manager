@@ -49,8 +49,8 @@ test('source inventory and repository documentation are complete', () => {
   assert.equal(manifest.version, '0.4.0');
   assert.deepEqual(manifest.assets.skills.map((entry) => entry.name), skillNames);
   assert.deepEqual(manifest.assets.prompts.map((entry) => entry.name), promptNames);
-  assert.equal(manifest.assets.bootstrap_instructions.length, 17);
-  assert.deepEqual(manifest.distribution.expected_payload_files, 37);
+  assert.equal(manifest.assets.bootstrap_instructions.length, 16);
+  assert.deepEqual(manifest.distribution.expected_payload_files, 36);
 
   for (const relativePath of [
     'README.md',
@@ -80,6 +80,12 @@ test('all lifecycle skills, prompts, runtime, and resources are present', () => 
   assert(fs.existsSync(path.join(
     repoRoot, '.github', 'skills', 'bootstrap-workspace', 'resources', 'markdown-light.css')),
   'missing workspace Markdown CSS');
+});
+
+test('Core declares no Manager-owned lifecycle skill', { skip: !fs.existsSync(coreRoot) }, () => {
+  const collisions = skillNames.filter((name) => fs.existsSync(path.join(
+    coreRoot, '.github', 'skills', name, 'SKILL.md')));
+  assert.deepEqual(collisions, []);
 });
 
 test('user baseline carries the framework discovery floor', () => {
@@ -140,10 +146,19 @@ test('install enables every selected plugin globally', () => {
   assert.doesNotMatch(prompt, /configure-workspace-capabilities/);
 });
 
-test('bootstrap bundle contains seventeen Core-owned instruction resources', () => {
+test('install offers Document Tools now that conversion is outside Core', () => {
+  const skill = fs.readFileSync(path.join(
+    repoRoot, '.github', 'skills', 'install-constellation', 'SKILL.md'), 'utf8');
+  assert.match(skill, /alex-act-document-tools@alex-mall/);
+  assert.match(skill, /copilot plugin install alex-act-document-tools@alex-mall/);
+  assert.match(skill, /Document Tools third/);
+});
+
+test('bootstrap bundle contains sixteen Core-owned instruction resources', () => {
   const bootstrap = path.join(repoRoot, '.github', 'skills', 'install-constellation', 'bootstrap');
   const files = fs.readdirSync(bootstrap).filter((name) => name.endsWith('.instructions.md')).sort();
-  assert.equal(files.length, 17);
+  assert.equal(files.length, 16);
+  assert.equal(files.includes('alex-act-memory-triggers.instructions.md'), false);
   if (!fs.existsSync(coreRoot)) return;
   const mismatches = [];
   for (const name of files) {
@@ -208,7 +223,7 @@ test('installable source stays below the Windows payload ceiling', () => {
   }
   for (const root of roots) collect(path.join(repoRoot, root));
   assert(files.length <= 100, `${files.length} installable files exceed the 100-file ceiling`);
-  assert.equal(files.length, 33, 'unexpected installable source file count');
+  assert.equal(files.length, 32, 'unexpected installable source file count');
 });
 
 test('workspace bootstrap is self-contained and preview-only by default', (t) => {

@@ -1,5 +1,5 @@
 ---
-description: "On short greeting patterns, silently verify the Alex ACT brain spine (Manager, Core, and the seventeen-file bootstrap) and check updates. Optional plugins never determine brain health. Cache results for 60 minutes. Never install or update without explicit consent."
+description: "On short greeting patterns, silently verify the Alex ACT brain spine (Manager, Core, and the sixteen-file bootstrap) and check updates. Optional plugins never determine brain health. Cache results for 60 minutes. Never install or update without explicit consent."
 applyTo: "**"
 ---
 
@@ -12,7 +12,7 @@ available updates are healthy, stay quiet.
 ## Fresh-install boundary
 
 This instruction cannot run before the first bootstrap because it is one of the
-seventeen copied files. A fresh machine must install Manager and Core, then
+sixteen copied files. A fresh machine must install Manager and Core, then
 invoke `/alex-act-manager install-constellation` once. After that, greeting owns
 brain-spine repair and update discovery.
 
@@ -54,12 +54,12 @@ Read all four dimensions before deciding what to say:
 
 | Dimension | How to read | Complete criterion |
 |---|---|---|
-| **Bootstrap receipt** | Read the receipt and hash each owned target against Manager's bundled bootstrap resources | Receipt records installed Core, owns exactly 17 existing files, and every hash matches |
+| **Bootstrap receipt** | Read the receipt and hash each owned target against Manager's bundled bootstrap resources | Receipt records installed Core, owns exactly 16 existing files, and every hash matches |
 | **Brain spine installed** | Run `copilot plugin list`, with installed manifests as fallback | `alex-act-manager@alex-mall` and `alex-act-core@alex-mall` are installed |
 | **Brain spine enabled** | Read user and repository `enabledPlugins` maps | Manager and Core resolve to `true`; repository settings must never set either to `false` |
 | **Update availability** | Use Manager's exact marketplace resolver for installed public plugins; use authenticated source metadata for direct private plugins | No installed plugin is older than its source record; offline means no update conclusion |
 
-Manager and Core plus the seventeen-file bootstrap are literally the brain
+Manager and Core plus the sixteen-file bootstrap are literally the brain
 spine. They are not optional at workspace scope. Illustrator, Enterprise,
 Document Tools, MSFT, visual companions, downstream workloads, and their MCP
 servers are optional plugins. Missing or disabled optional plugins do not and
@@ -104,7 +104,7 @@ Print BEFORE responding to the user's actual greeting:
 Welcome. The Alex ACT brain spine is incomplete:
 
 - Manager and Core must both be installed and enabled.
-- The seventeen receipt-owned instructions must be present and current.
+- The sixteen receipt-owned instructions must be present and current.
 
 **Complete setup?**
 
@@ -120,7 +120,7 @@ brain repair; plugins selected during installation remain active at user scope.
 Shorter — user has completed setup once; they know the drill:
 
 ```markdown
-Note: Core and your instruction bootstrap differ. Refresh the seventeen files from Manager? [Y/n]
+Note: Core and your instruction bootstrap differ. Refresh the sixteen files from Manager? [Y/n]
 ```
 
 On Y, run Manager's bootstrap-only repair. On n, respect the decline for this
@@ -202,7 +202,7 @@ Write with 2-space indentation and a trailing newline, atomic (write to `.tmp` t
 | Running the update-check fetch on every greeting even if cache is fresh | Respect the 60-min cache. Skip fetch entirely when cache is fresh. |
 | Auto-invoking install without explicit Y | Every setup action requires consent. Never assume. |
 | Treating an optional plugin as required for health | Only Manager, Core, and the bootstrap define the brain spine. |
-| Verbose multi-line explanations for the update notice | One line, one CTA. Users invoke `/alex-act-core update-plugins` when they're ready. |
+| Verbose multi-line explanations for the update notice | One line, one CTA. Users invoke `/alex-act-manager update-plugins` when they're ready. |
 | Blocking the user's actual message while doing the check | Do the check silently; if state is healthy, respond to the message normally without any preamble. Only interrupt if there's actual action to offer. |
 | Prompting again immediately after decline within same session | Wait until cache expires (60 min). Trust the user's answer. |
 

@@ -43,7 +43,7 @@ When approaching session limits or switching topics, write the cross-session han
 
 ## Bootstrap Drift Detection (Alex ACT constellation)
 
-At most once per session, verify that the Alex ACT discipline layer installed at `~/.copilot/instructions/` matches the currently installed Core plugin version. Drift is silent by default — `copilot plugin update --all` bumps the plugin tree without refreshing the always-on instructions, so the discipline layer lags behind the installed plugin until `install-constellation` Step 6 runs again. Users who never re-run install-constellation after an update never see new discipline additions (like `greeting-checkin` shipped in v0.4.0).
+At most once per session, verify that the Alex ACT discipline layer installed at `~/.copilot/instructions/` matches the currently installed Core plugin version. Drift is silent by default — `copilot plugin update --all` bumps the plugin tree without refreshing the always-on instructions, so the discipline layer lags behind the installed plugin until Manager's `install-constellation` bootstrap step runs again. Users who never re-run install-constellation after an update never see new discipline additions (like `greeting-checkin` shipped in v0.4.0).
 
 **Check once per session (before any substantive response):**
 
@@ -57,7 +57,7 @@ At most once per session, verify that the Alex ACT discipline layer installed at
 
 **Nudge shape (one line, non-blocking, printed BEFORE responding to user's actual message):**
 
-> 📝 Alex ACT discipline layer is from Core v`<receiptVersion>` but installed Core is v`<installedVersion>`. Run `/alex-act-core install-constellation` (Step 6 refreshes the bootstrap). Old rules keep working; new instructions from v`<installedVersion>` won't fire until refresh.
+> 📝 Alex ACT discipline layer is from Core v`<receiptVersion>` but installed Core is v`<installedVersion>`. Run `/alex-act-manager install-constellation` and take the bootstrap-only repair path. Old rules keep working; new instructions from v`<installedVersion>` won't fire until refresh.
 
 After surfacing, write `driftNudgeSurfacedThisSession: true` into `~/.copilot/instructions/.alex-act-session-hint.json` (create the file if absent, merge with existing fields). Do not repeat within the same session.
 
@@ -67,7 +67,7 @@ After surfacing, write `driftNudgeSurfacedThisSession: true` into `~/.copilot/in
 - Versions match exactly
 - Nudge already surfaced this session (`alreadyNudged === true`)
 - User's message is a greeting pattern (`greeting-checkin` owns the greeting slot; do not double-nudge)
-- User explicitly said "skip drift checks" or invoked `/alex-act-core install-constellation` in the same session
+- User explicitly said "skip drift checks" or invoked `/alex-act-manager install-constellation` in the same session
 
 **Chicken-and-egg note:** this drift-detection exists specifically because `greeting-checkin` (added in v0.4.0) cannot detect its own absence — if a user is still on the pre-v0.4.0 bootstrap, `greeting-checkin.instructions.md` isn't at `~/.copilot/instructions/`, so no greeting will trigger the check. This instruction has been part of the bootstrap since v0.3.0, so it can fire the version-drift nudge on machines that greeting-checkin can't reach.
 
