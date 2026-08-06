@@ -9,6 +9,10 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ### Fixed
 
+- Made instruction-bootstrap idempotency require exact source, destination, and
+  receipt hash parity even when the Core version is unchanged. New receipts
+  record a per-file SHA-256 map; legacy receipts remain readable and are
+  verified against the bundled source before repair decisions.
 - Made JSONC parsing string-aware for comments and trailing commas, and made
   workspace bootstrap fail closed before writing comment-rich settings.
 - Centralized the six-plugin lifecycle inventory and reconciled install,
@@ -18,7 +22,8 @@ and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Routed settings verification and Alex Mall version checks through Manager's
   deterministic runtime, removed stale exact payload counts, and corrected the
   greeting status namespace in Core source and the bootstrap mirror.
-- Added focused regressions and standalone CI against immutable Core `v1.0.0`.
+- Added focused regressions and standalone CI against immutable Core commit
+  `4d4439b`.
 
 ### Changed
 

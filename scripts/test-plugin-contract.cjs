@@ -228,6 +228,16 @@ test('bootstrap bundle contains sixteen Core-owned instruction resources', () =>
   assert.deepEqual(mismatches, []);
 });
 
+test('bootstrap idempotency requires hash parity even when Core version matches', () => {
+  const install = fs.readFileSync(path.join(
+    repoRoot, '.github', 'skills', 'install-constellation', 'SKILL.md'), 'utf8');
+  assert.match(install, /version is metadata, not the sole idempotency key/i);
+  assert.match(install, /equal version with a\s+hash mismatch is `stale`/i);
+  assert.match(install, /Every destination.*SHA-256 equals.*bundled\s+source/is);
+  assert.match(install, /Existing receipts without\s+`sha256` remain readable/i);
+  assert.match(install, /receipt hashes.*source and destination hashes/i);
+});
+
 test('Manager command guidance uses the Manager namespace', () => {
   const violations = [];
   for (const name of promptNames) {

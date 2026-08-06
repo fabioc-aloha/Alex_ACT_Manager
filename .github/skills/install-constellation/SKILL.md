@@ -266,6 +266,9 @@ After writing, record exactly what was placed at `~/.copilot/instructions/.alex-
   "bootstrappedBy": "alex-act-core",
   "coreVersion": "<the installed Core version, read from the plugin's own manifest — not copied from this example>",
   "timestamp": "<ISO 8601 UTC at write time>",
+  "sha256": {
+    "<each file name listed below>": "<the lowercase SHA-256 of the exact copied bytes>"
+  },
   "files": [
     "alex-act-alex-finch-personality.instructions.md",
     "alex-act-act-pass.instructions.md",
@@ -287,11 +290,32 @@ After writing, record exactly what was placed at `~/.copilot/instructions/.alex-
 }
 ```
 
-Uninstall reads this receipt. It never globs and deletes, because the heir's own files live in the same folder.
+Uninstall reads the `files` array in this receipt. It never globs and deletes,
+because the heir's own files live in the same folder. The `sha256` map is
+verification evidence, not an ownership list. Existing receipts without
+`sha256` remain readable; treat them as legacy receipts and verify against the
+current bundled source before deciding whether repair is needed.
 
 #### Idempotency
 
-On re-run, compare the receipt's `coreVersion` against the installed Core version. Equal means skip and report "discipline bootstrap is current". Different means rewrite the sixteen files and update the receipt. Missing receipt with files present means a hand-edited state; report it and ask before touching anything.
+On every re-run, resolve the bundled source and calculate all sixteen source
+hashes before deciding to skip. The bootstrap is current only when all four
+conditions hold:
+
+1. The receipt records the installed Core version.
+2. The receipt owns exactly the expected sixteen target names.
+3. Every destination exists and its SHA-256 equals the corresponding bundled
+  source SHA-256.
+4. When the receipt has a `sha256` map, every recorded hash equals both the
+  source and destination hash.
+
+The version is metadata, not the sole idempotency key. An equal version with a
+hash mismatch is `stale` and routes to bootstrap-only repair after showing the
+file-level delta. This catches source fixes made before a version bump and
+manual edits to user-scope files. A different version also routes to repair,
+even if bytes happen to match, so the receipt remains truthful. Missing receipt
+with files present means a hand-edited state; report it and ask before touching
+anything.
 
 #### Verify
 
@@ -300,7 +324,8 @@ Default verification is deterministic:
 1. Receipt owns exactly sixteen files and records the installed Core version.
 2. All sixteen destination files exist.
 3. Every destination SHA-256 equals its bundled source.
-4. No unrelated file in `~/.copilot/instructions/` is claimed by the receipt.
+4. Receipt hashes, when present, equal the source and destination hashes.
+5. No unrelated file in `~/.copilot/instructions/` is claimed by the receipt.
 
 The clean-directory AI smoke is optional because it starts a model session and can consume material time, tokens, and credits. Disclose that cost and ask separately before running:
 
@@ -364,7 +389,10 @@ The skill is safe to re-run. On subsequent runs:
 - If all five setup targets selected by the heir are already installed at their latest version, report "constellation is current — nothing to install" and exit.
 - If some are missing, install only the missing ones.
 - If any are at a lower version than what the marketplace currently ships, defer to `update-plugins` — this skill installs, it does not update.
-- The discipline bootstrap has its own idempotency check, keyed on the receipt's `coreVersion`. A current constellation with a stale bootstrap receipt still warrants re-running Step 7.
+- The discipline bootstrap has its own idempotency check, keyed on exact source,
+  destination, and receipt hashes plus the installed Core version. A current
+  constellation with stale bytes or a stale receipt still warrants re-running
+  Step 7.
 - The VS Code user baseline and current-workspace bootstrap have independent idempotency checks. A current plugin set does not imply either settings scope is current.
 
 ## Anti-patterns

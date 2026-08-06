@@ -16,23 +16,17 @@
 | Payload accounting drift | Resolved | Delivery surface is `repository-at-release-tag`; only the real ceiling remains tested |
 | Settings verification mismatch | Resolved | Read-only prompt delegates to deterministic `configure-vscode` preview |
 | Conflicting update authority | Resolved | Exact Mall manifest resolver is authoritative; catalog is discovery-only |
-| Conditional release assurance | Resolved in source | 26 local tests pass; CI checks out immutable Core `v1.0.0` and runs the same suite |
-| Bootstrap and namespace documentation drift | Resolved | 16-file language and Manager-owned `plugin-status` route are contract-tested |
+| Conditional release assurance | Resolved in source | 27 local tests pass; CI pins Core `4d4439b`; hosted evidence requires Core-first push |
+| Bootstrap and namespace documentation drift | Resolved | 16-file language, Manager-owned `plugin-status`, and hash-driven idempotency are contract-tested |
 
 ## Executive Summary
 
 The project has a strong preview-and-consent design, a small dependency surface,
-and a fast contract suite. However, it is **not ready for another release** until
-two high-severity defects are resolved:
-
-- The custom JSONC handling can silently corrupt unrelated settings and erase
-  workspace comments.
-- Constellation inventory drift makes install, status, update, uninstall, and
-  reinstall behavior disagree about which plugins Manager owns.
-
-This audit found **2 high**, **5 medium**, and **0 critical** issues. The current
-contract suite passes, but it does not exercise the failing cases reproduced
-below.
+and a fast contract suite. The original audit found **2 high**, **5 medium**,
+and **0 critical** issues. All reproduced source findings are now resolved and
+the contract suite covers their failure classes. Release readiness still needs
+hosted CI after Core `4d4439b` is pushed, because Manager CI pins that immutable
+Core commit.
 
 ## Findings
 
