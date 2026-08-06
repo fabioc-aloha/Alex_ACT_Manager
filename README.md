@@ -8,8 +8,8 @@ Alex ACT Manager keeps lifecycle work out of the reasoning runtime. Setup, repai
 
 ## Status
 
-**Released as `v0.4.0`.** Approved unreleased source moves the bootstrap from
-17 files to 16 and removes Shared Memory routing. Source:
+**Released as `v1.0.0`.** The bootstrap carries 16 files and Shared Memory
+routing is removed. Source:
 [`fabioc-aloha/Alex_ACT_Manager`](https://github.com/fabioc-aloha/Alex_ACT_Manager).
 Install from the Alex ACT Mall as `alex-act-manager@alex-mall`.
 
@@ -64,9 +64,9 @@ workspace behavior.
 Approved Manager source bundles 16 instruction resources copied byte-for-byte
 from current `Alex_ACT_Core` source. Core remains their authority. Manager
 packages and installs them; it does not fork their content. The test suite fails
-if a local Core checkout exposes drift. Published Manager v0.4.0 and installed
-receipts remain on the 17-file contract until the separately gated release,
-Mall refresh, plugin update, and bootstrap repair complete.
+if a local Core checkout exposes drift. Manager v1.0.0 ships the 16-file
+contract; installed receipts refresh on the next plugin update and bootstrap
+repair.
 
 ## Development
 

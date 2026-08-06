@@ -38,7 +38,7 @@ function sha256(filePath) {
 test('plugin manifest exposes the Manager lifecycle bundle', () => {
   const plugin = readJson('plugin.json');
   assert.equal(plugin.name, 'alex-act-manager');
-  assert.equal(plugin.version, '0.4.0');
+  assert.equal(plugin.version, '1.0.0');
   assert.equal(plugin.skills, '.github/skills');
   assert.equal(plugin.commands, '.github/prompts');
 });
@@ -46,7 +46,7 @@ test('plugin manifest exposes the Manager lifecycle bundle', () => {
 test('source inventory and repository documentation are complete', () => {
   const manifest = readJson('manifest.json');
   assert.equal(manifest.plugin, 'alex-act-manager');
-  assert.equal(manifest.version, '0.4.0');
+  assert.equal(manifest.version, '1.0.0');
   assert.deepEqual(manifest.assets.skills.map((entry) => entry.name), skillNames);
   assert.deepEqual(manifest.assets.prompts.map((entry) => entry.name), promptNames);
   assert.equal(manifest.assets.bootstrap_instructions.length, 16);
