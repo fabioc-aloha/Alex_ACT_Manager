@@ -301,7 +301,6 @@ Added 2026-08-01 to support the `greeting-checkin` instruction's proactive sessi
 - `install-constellation` — Alex ACT-specific install list; delegates to this skill for the mechanical commands.
 - `update-plugins` — safe `copilot plugin update --all` wrap; delegates to this skill for the raw update commands.
 - `configure-vscode` (Batch 10) — VS Code user settings; complementary but distinct — this skill covers CLI plugins, that skill covers VS Code settings.
-- `ai-memory-setup` (Batch 10) — Alex_ACT_Memory sibling repo; independent of plugin management (Memory is a Git repo, not a plugin).
 
 ## Falsifiability
 

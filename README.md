@@ -33,9 +33,14 @@ as `/alex-act-manager plugin-status`.
 
 ## Why Manager Exists
 
-Core reached the observed Copilot CLI Windows ceiling of 100 files while
+Core reached this constellation's own 100-file packaging convention while
 combining frequent reasoning with infrequent lifecycle work. Manager separates
 those concerns without becoming a second brain.
+
+The 100-file figure is a convention we set for ourselves, not a platform limit:
+no install-time check enforces it, and a 133-file install succeeded on Copilot
+CLI 1.0.78. The split still earns its keep on maintenance grounds, because
+lifecycle work changes on a different cadence than reasoning.
 
 | Core keeps | Manager owns |
 | --- | --- |

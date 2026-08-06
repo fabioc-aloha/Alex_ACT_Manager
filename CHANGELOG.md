@@ -5,6 +5,21 @@ All notable changes to Alex ACT Manager will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- README: the 100-file figure is now stated as this constellation's own
+  packaging convention rather than an observed Copilot CLI Windows ceiling. No
+  install-time check enforces it, and a 133-file install succeeded on Copilot
+  CLI 1.0.78. The Core/Manager split is re-argued on maintenance-cadence
+  grounds, which is the reason that survives the correction.
+
+### Removed
+
+- `plugin-management`: dropped the `ai-memory-setup` cross-reference. That skill
+  was removed from the baseline by ADR-020, so the bullet pointed at nothing.
+
 ## [1.0.0] - 2026-08-06
 
 ### Changed
